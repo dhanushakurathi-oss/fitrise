@@ -2357,5 +2357,104 @@ document.querySelectorAll('.track-item').forEach((item,i)=>{
   });
 });
 </script>
+   <!-- FIREBASE AUTH -->
+<script type="module">
+
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+// ⭐ YOUR CONFIG (already from screenshot)
+const firebaseConfig = {
+  apiKey: "AIzaSyBf...",
+  authDomain: "fitrise-41bb0.firebaseapp.com",
+  projectId: "fitrise-41bb0",
+  storageBucket: "fitrise-41bb0.appspot.com",
+  messagingSenderId: "567411054341",
+  appId: "1:567411054341:web:422f48..."
+};
+
+// Init
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+
+
+// =========================
+// EMAIL SIGNUP
+// =========================
+window.authNext1 = async function () {
+  const email = document.getElementById("authEmail").value;
+  const pass = document.getElementById("authPass").value;
+
+  if (!email || !pass) {
+    alert("Enter email & password");
+    return;
+  }
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, pass);
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
+
+// =========================
+// EMAIL LOGIN
+// =========================
+window.loginEmail = async function () {
+  const email = document.getElementById("authEmail").value;
+  const pass = document.getElementById("authPass").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
+
+// =========================
+// GOOGLE LOGIN
+// =========================
+window.socialAuth = async function () {
+  try {
+    await signInWithPopup(auth, googleProvider);
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
+
+// =========================
+// AUTO LOGIN → DASHBOARD
+// =========================
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById("landing").classList.remove("active");
+    document.getElementById("dashboard").classList.add("active");
+  }
+});
+
+
+// =========================
+// LOGOUT
+// =========================
+window.logoutUser = async function () {
+  await signOut(auth);
+  location.reload();
+};
+
+</script>
 </body>
 </html>
