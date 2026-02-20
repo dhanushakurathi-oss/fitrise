@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitRise — Grow Taller, Stronger, Calmer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sage:#8BAF7C;--deep:#0F1A12;--cream:#F5F0E8;--gold:#D4A853;
+  --forest:#1A2F20;--forest2:#223829;--light-sage:#C8DEC0;--muted:#6B7C6E;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--deep);color:var(--cream);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+.cur{width:10px;height:10px;background:var(--gold);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;mix-blend-mode:difference;}
+.cur-ring{width:32px;height:32px;border:1.5px solid var(--sage);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transition:all .25s ease;}
+
+/* SCROLL PROGRESS */
+.sp{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--sage),var(--gold));z-index:1001;width:0;}
+
+/* PARTICLES */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.p{position:absolute;border-radius:50%;animation:pdrift linear infinite;opacity:0;}
+@keyframes pdrift{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}15%{opacity:.5;}85%{opacity:.2;}100%{transform:translateY(-5vh) rotate(360deg);opacity:0;}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:16px 48px;background:rgba(15,26,18,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(139,175,124,.08);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.1em;cursor:none;}
+.logo span{color:var(--gold);}
+nav ul{list-style:none;display:flex;gap:24px;align-items:center;}
+nav a{color:var(--light-sage);text-decoration:none;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;transition:color .3s;cursor:none;}
+nav a:hover{color:var(--gold);}
+.nav-cta{background:var(--gold)!important;color:var(--deep)!important;padding:8px 20px;border-radius:2px;font-weight:600!important;}
+
+/* ═══════════════════════════════
+   MUSIC PLAYER — Floating
+═══════════════════════════════ */
+#musicPlayer{
+  position:fixed;bottom:28px;right:28px;z-index:300;
+  background:rgba(15,26,18,.95);
+  border:1px solid rgba(139,175,124,.35);
+  border-radius:16px;
+  width:320px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+  overflow:hidden;
+}
+#musicPlayer.minimized{width:60px;height:60px;border-radius:50%;cursor:none;}
+#musicPlayer.minimized .mp-full{display:none;}
+#musicPlayer.minimized .mp-mini{display:flex;}
+.mp-mini{display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:1.4rem;}
+.mp-full{padding:20px;}
+
+.mp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.mp-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.08em;color:var(--sage);}
+.mp-toggle{background:none;border:none;color:var(--muted);cursor:none;font-size:1rem;transition:color .3s;}
+.mp-toggle:hover{color:var(--cream);}
+
+/* Visualizer */
+.mp-viz{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:44px;margin-bottom:16px;}
+.vb{width:4px;background:var(--sage);border-radius:2px;animation:vbounce ease-in-out infinite;min-height:3px;}
+.vb:nth-child(1){animation-duration:0.8s;animation-delay:0s;}
+.vb:nth-child(2){animation-duration:1.0s;animation-delay:.1s;}
+.vb:nth-child(3){animation-duration:0.7s;animation-delay:.05s;}
+.vb:nth-child(4){animation-duration:1.2s;animation-delay:.15s;}
+.vb:nth-child(5){animation-duration:0.9s;animation-delay:.08s;}
+.vb:nth-child(6){animation-duration:0.75s;animation-delay:.12s;}
+.vb:nth-child(7){animation-duration:1.1s;animation-delay:.03s;}
+.vb:nth-child(8){animation-duration:0.85s;animation-delay:.18s;}
+.vb:nth-child(9){animation-duration:0.95s;animation-delay:.07s;}
+.vb:nth-child(10){animation-duration:1.05s;animation-delay:.13s;}
+.vb:nth-child(11){animation-duration:0.78s;animation-delay:.09s;}
+.vb:nth-child(12){animation-duration:1.15s;animation-delay:.16s;}
+@keyframes vbounce{0%,100%{height:3px;opacity:.4;}50%{height:36px;opacity:1;}}
+.mp-viz.paused .vb{animation-play-state:paused;}
+
+/* Track info */
+.mp-track{text-align:center;margin-bottom:14px;}
+.mp-track-name{font-weight:600;font-size:.9rem;color:var(--cream);margin-bottom:3px;}
+.mp-track-type{font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+
+/* Track list */
+.mp-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;max-height:160px;overflow-y:auto;}
+.mp-list::-webkit-scrollbar{width:3px;}
+.mp-list::-webkit-scrollbar-track{background:transparent;}
+.mp-list::-webkit-scrollbar-thumb{background:rgba(139,175,124,.3);border-radius:2px;}
+.mp-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:none;transition:background .2s;border:1px solid transparent;}
+.mp-item:hover{background:rgba(139,175,124,.08);}
+.mp-item.active{background:rgba(139,175,124,.12);border-color:rgba(139,175,124,.25);}
+.mp-item-icon{font-size:1.1rem;flex-shrink:0;}
+.mp-item-info{flex:1;}
+.mp-item-name{font-size:.82rem;color:var(--cream);font-weight:500;}
+.mp-item-cat{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+.mp-item-dur{font-size:.72rem;color:var(--sage);}
+
+/* Controls */
+.mp-controls{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px;}
+.mp-btn{background:none;border:none;color:var(--light-sage);cursor:none;font-size:1rem;transition:all .2s;padding:4px;}
+.mp-btn:hover{color:var(--cream);transform:scale(1.15);}
+.mp-play{width:44px;height:44px;background:var(--sage);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--deep);transition:all .3s;}
+.mp-play:hover{background:var(--light-sage);transform:scale(1.1);}
+
+/* Progress / Volume */
+.mp-bar-wrap{margin-bottom:10px;}
+.mp-bar-label{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-bottom:5px;}
+.mp-bar{height:3px;background:rgba(139,175,124,.2);border-radius:2px;cursor:none;position:relative;}
+.mp-bar-fill{height:100%;background:linear-gradient(90deg,var(--sage),var(--gold));border-radius:2px;transition:width .5s linear;}
+.mp-vol{display:flex;align-items:center;gap:8px;}
+.mp-vol-icon{font-size:.85rem;color:var(--muted);}
+input[type=range].vol-slider{-webkit-appearance:none;flex:1;height:3px;background:rgba(139,175,124,.2);border-radius:2px;outline:none;cursor:none;}
+input[type=range].vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;background:var(--sage);border-radius:50%;cursor:none;}
+
+/* ═══════════════════════════════
+   HERO
+═══════════════════════════════ */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:
+  radial-gradient(ellipse 65% 80% at 70% 50%,rgba(139,175,124,.1) 0%,transparent 70%),
+  radial-gradient(ellipse 40% 60% at 15% 85%,rgba(212,168,83,.06) 0%,transparent 60%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(139,175,124,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,175,124,.04) 1px,transparent 1px);background-size:64px 64px;}
+.hero-left{display:flex;flex-direction:column;justify-content:center;padding:140px 48px 80px 80px;position:relative;z-index:2;}
+.hero-tag{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:10px;animation:slideIn .8s ease both;}
+.hero-tag::before{content:'';display:block;width:28px;height:1px;background:var(--gold);}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,7vw,7rem);line-height:.88;letter-spacing:.02em;animation:slideIn .8s .15s ease both;}
+h1 em{font-family:'Playfair Display',serif;color:var(--sage);font-size:.85em;display:block;}
+.hero-desc{font-size:.98rem;color:var(--muted);line-height:1.75;max-width:390px;margin:24px 0 36px;font-weight:300;animation:slideIn .8s .3s ease both;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;animation:slideIn .8s .45s ease both;}
+.btn-primary{background:var(--gold);color:var(--deep);padding:14px 32px;font-family:'DM Sans',sans-serif;font-size:.87rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:none;cursor:none;transition:all .3s;border-radius:2px;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(212,168,83,.25);}
+.btn-outline{background:transparent;color:var(--cream);padding:14px 30px;font-size:.87rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(245,240,232,.22);cursor:none;transition:all .3s;border-radius:2px;font-family:'DM Sans',sans-serif;}
+.btn-outline:hover{border-color:var(--sage);color:var(--sage);}
+.hero-stats{display:flex;gap:34px;margin-top:52px;padding-top:32px;border-top:1px solid rgba(139,175,124,.18);animation:slideIn .8s .6s ease both;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.3rem;color:var(--sage);}
+.stat-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px;}
+.hero-right{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;padding:120px 48px 80px;}
+.hero-visual{width:310px;height:450px;background:linear-gradient(135deg,var(--forest) 0%,rgba(34,56,41,.55) 100%);border:1px solid rgba(139,175,124,.2);border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:24px;overflow:hidden;animation:slideIn .8s .3s ease both;}
+.hero-visual::before{content:'🧘';position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:8rem;animation:floatEl 4s ease-in-out infinite;filter:drop-shadow(0 20px 40px rgba(139,175,124,.3));}
+@keyframes floatEl{0%,100%{transform:translate(-50%,-60%) translateY(0);}50%{transform:translate(-50%,-60%) translateY(-14px);}}
+.visual-badge{background:rgba(212,168,83,.1);border:1px solid var(--gold);border-radius:2px;padding:10px 14px;font-size:.76rem;color:var(--gold);}
+.visual-badge strong{display:block;font-size:.98rem;margin-bottom:2px;}
+.float-card{position:absolute;background:rgba(15,26,18,.92);border:1px solid rgba(139,175,124,.28);border-radius:4px;padding:12px 15px;font-size:.76rem;backdrop-filter:blur(12px);}
+.fc1{top:150px;right:-26px;animation:fc 5s ease-in-out infinite;}
+.fc2{bottom:150px;left:-36px;animation:fc 5s ease-in-out 1.5s infinite;}
+@keyframes fc{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+.fc-title{color:var(--sage);font-weight:500;margin-bottom:2px;}
+.fc-val{color:var(--cream);font-size:1.1rem;font-family:'Bebas Neue';letter-spacing:.05em;}
+
+/* ═══════════════════════════════
+   SECTIONS
+═══════════════════════════════ */
+section{padding:96px 80px;position:relative;z-index:1;}
+.section-tag{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:13px;display:flex;align-items:center;gap:9px;}
+.section-tag::before{content:'';display:block;width:20px;height:1px;background:var(--gold);}
+h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,5vw,4.5rem);letter-spacing:.03em;line-height:.95;color:var(--cream);margin-bottom:16px;}
+h2 span{color:var(--sage);}
+
+/* ═══════════════════════════════
+   PROGRAMS
+═══════════════════════════════ */
+#programs{background:var(--deep);}
+.programs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px;background:rgba(139,175,124,.08);border:1px solid rgba(139,175,124,.1);}
+.pg-card{background:var(--deep);padding:36px 28px;transition:background .4s;position:relative;overflow:hidden;}
+.pg-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sage),var(--gold));transform:scaleX(0);transition:transform .4s;}
+.pg-card:hover{background:var(--forest2);}
+.pg-card:hover::after{transform:scaleX(1);}
+.pg-icon{font-size:2.3rem;margin-bottom:16px;display:block;}
+.pg-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.05em;margin-bottom:10px;}
+.pg-card p{font-size:.87rem;color:var(--muted);line-height:1.65;margin-bottom:20px;}
+.pg-meta{display:flex;gap:12px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;}
+.pg-meta span{color:var(--sage);}
+.pg-meta .s{color:var(--muted);}
+
+/* ═══════════════════════════════
+   EXERCISES
+═══════════════════════════════ */
+#exercises{background:var(--forest);}
+.ex-layout{display:grid;grid-template-columns:360px 1fr;gap:72px;margin-top:52px;align-items:start;}
+.ex-list{display:flex;flex-direction:column;gap:2px;}
+.ex-item{padding:18px 22px;background:rgba(15,26,18,.5);border-left:3px solid transparent;cursor:none;transition:all .3s;display:flex;align-items:center;gap:14px;}
+.ex-item:hover,.ex-item.active{background:rgba(15,26,18,.9);border-left-color:var(--sage);}
+.ex-item .ei-name{font-weight:500;color:var(--cream);margin-bottom:2px;font-size:.9rem;}
+.ex-item .ei-type{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.ex-item .ei-ico{font-size:1.4rem;}
+.ex-item .ei-badge{margin-left:auto;background:rgba(139,175,124,.12);border:1px solid var(--sage);color:var(--sage);font-size:.66rem;padding:2px 9px;border-radius:20px;letter-spacing:.04em;}
+.ex-detail{background:rgba(15,26,18,.6);border:1px solid rgba(139,175,124,.18);border-radius:6px;padding:36px;}
+.ed-header{display:flex;align-items:center;gap:18px;margin-bottom:24px;}
+.ed-icon{font-size:3.2rem;}
+.ed-title{font-family:'Bebas Neue',sans-serif;font-size:2.3rem;letter-spacing:.04em;}
+.ed-sub{color:var(--muted);font-size:.82rem;margin-top:3px;}
+.ed-desc{font-size:.92rem;color:var(--muted);line-height:1.75;margin-bottom:28px;font-weight:300;}
+.steps{list-style:none;display:flex;flex-direction:column;gap:14px;margin-bottom:28px;}
+.steps li{display:flex;gap:14px;align-items:flex-start;font-size:.88rem;color:var(--cream);line-height:1.6;}
+.snum{width:26px;height:26px;background:var(--sage);color:var(--deep);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px;}
+.ed-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding-top:22px;border-top:1px solid rgba(139,175,124,.18);}
+.mbox{background:rgba(139,175,124,.07);border:1px solid rgba(139,175,124,.18);border-radius:2px;padding:14px;text-align:center;}
+.mbox .mv{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--sage);letter-spacing:.04em;}
+.mbox .ml{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px;}
+
+/* ═══════════════════════════════
+   YOGA TABS
+═══════════════════════════════ */
+#yoga{background:var(--forest2);}
+.tab-bar{display:flex;gap:2px;margin-top:44px;margin-bottom:36px;background:rgba(15,26,18,.5);padding:4px;border-radius:2px;width:fit-content;}
+.tab{padding:11px 30px;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;cursor:none;border:none;background:transparent;color:var(--muted);transition:all .3s;font-family:'DM Sans',sans-serif;border-radius:1px;}
+.tab.active{background:var(--sage);color:var(--deep);font-weight:600;}
+.tab-content{display:none;}
+.tab-content.active{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.pose-card{background:rgba(15,26,18,.55);border:1px solid rgba(139,175,124,.13);border-radius:6px;padding:26px;display:flex;gap:18px;transition:all .3s;cursor:none;}
+.pose-card:hover{border-color:rgba(139,175,124,.38);transform:translateY(-4px);}
+.pose-emoji{font-size:2.3rem;flex-shrink:0;}
+.pose-name{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.04em;margin-bottom:7px;}
+.pose-desc{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+.pose-tags{display:flex;gap:7px;flex-wrap:wrap;}
+.ptag{font-size:.68rem;padding:3px 9px;border:1px solid rgba(139,175,124,.28);border-radius:20px;color:var(--sage);text-transform:uppercase;letter-spacing:.05em;}
+
+/* ═══════════════════════════════
+   NUTRITION
+═══════════════════════════════ */
+#nutrition{background:var(--deep);}
+.nut-layout{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:52px;align-items:start;}
+.nut-categories{display:flex;flex-direction:column;gap:14px;}
+.nut-cat{background:rgba(26,47,32,.6);border:1px solid rgba(139,175,124,.15);border-radius:6px;padding:22px;transition:all .3s;}
+.nut-cat:hover{border-color:rgba(139,175,124,.35);transform:translateX(6px);}
+.nc-header{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+.nc-icon{font-size:1.8rem;}
+.nc-title{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.04em;}
+.nc-foods{display:flex;gap:8px;flex-wrap:wrap;}
+.nc-food{background:rgba(139,175,124,.08);border:1px solid rgba(139,175,124,.2);color:var(--light-sage);font-size:.75rem;padding:4px 12px;border-radius:20px;}
+.meal-planner{background:rgba(26,47,32,.5);border:1px solid rgba(139,175,124,.18);border-radius:6px;padding:28px;}
+.meal-planner h3{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;margin-bottom:20px;color:var(--cream);}
+.meal-slot{margin-bottom:20px;}
+.meal-slot-title{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.meal-slot-title::after{content:'';flex:1;height:1px;background:rgba(212,168,83,.2);}
+.meal-items{display:flex;flex-direction:column;gap:8px;}
+.meal-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(15,26,18,.6);border:1px solid rgba(139,175,124,.12);border-radius:4px;font-size:.84rem;transition:border-color .3s;}
+.meal-item:hover{border-color:rgba(139,175,124,.3);}
+.mi-ico{font-size:1.1rem;}
+.mi-name{flex:1;color:var(--cream);}
+.mi-cal{font-size:.75rem;color:var(--muted);}
+.mi-tag{font-size:.66rem;padding:2px 8px;border-radius:10px;background:rgba(139,175,124,.12);color:var(--sage);}
+
+/* ═══════════════════════════════
+   AI CHAT
+═══════════════════════════════ */
+#ai{background:var(--forest);}
+.ai-layout{display:grid;grid-template-columns:1fr 1.1fr;gap:72px;margin-top:52px;align-items:center;}
+.ai-chat{background:rgba(26,47,32,.4);border:1px solid rgba(139,175,124,.22);border-radius:8px;padding:26px;position:relative;}
+.ai-chat-header{display:flex;align-items:center;gap:10px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid rgba(139,175,124,.13);}
+.ai-dot{width:9px;height:9px;background:var(--sage);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.ai-chat-header span{font-size:.83rem;color:var(--sage);letter-spacing:.05em;}
+.chat-msgs{display:flex;flex-direction:column;gap:14px;max-height:260px;overflow-y:auto;padding-right:4px;}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:rgba(139,175,124,.3);border-radius:2px;}
+.msg{padding:11px 15px;border-radius:2px;font-size:.86rem;line-height:1.6;max-width:85%;}
+.msg-user{background:rgba(212,168,83,.1);border:1px solid rgba(212,168,83,.22);color:var(--cream);align-self:flex-end;}
+.msg-ai{background:rgba(139,175,124,.09);border:1px solid rgba(139,175,124,.22);color:var(--light-sage);align-self:flex-start;}
+.chat-input-row{display:flex;gap:9px;margin-top:18px;padding-top:14px;border-top:1px solid rgba(139,175,124,.13);}
+#chatInput{flex:1;background:rgba(15,26,18,.8);border:1px solid rgba(139,175,124,.22);color:var(--cream);padding:11px 15px;font-family:'DM Sans',sans-serif;font-size:.86rem;border-radius:2px;outline:none;}
+#chatInput::placeholder{color:var(--muted);}
+.send-btn{background:var(--sage);color:var(--deep);border:none;padding:11px 18px;cursor:none;font-size:.95rem;border-radius:2px;transition:background .3s;}
+.send-btn:hover{background:var(--light-sage);}
+.ai-features{display:flex;flex-direction:column;gap:20px;}
+.af{display:flex;gap:18px;padding:22px;border:1px solid rgba(139,175,124,.13);border-radius:4px;transition:all .3s;}
+.af:hover{border-color:rgba(139,175,124,.38);background:rgba(26,47,32,.3);}
+.af-icon{font-size:1.9rem;flex-shrink:0;}
+.af-title{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.04em;margin-bottom:7px;}
+.af-desc{font-size:.85rem;color:var(--muted);line-height:1.65;}
+
+/* ═══════════════════════════════
+   TIMER
+═══════════════════════════════ */
+#timer-sec{background:var(--deep);}
+.timer-area{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:52px;align-items:center;}
+.timer-display{text-align:center;padding:56px;border:2px solid rgba(139,175,124,.18);border-radius:6px;background:radial-gradient(ellipse at center,rgba(139,175,124,.05) 0%,transparent 70%);}
+.timer-ring{width:190px;height:190px;border-radius:50%;border:2px solid rgba(139,175,124,.13);margin:0 auto 26px;display:flex;align-items:center;justify-content:center;position:relative;}
+.timer-ring::before{content:'';position:absolute;inset:5px;border-radius:50%;border:2px solid var(--sage);border-right-color:transparent;animation:spin 2.5s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.timer-ring.paused::before{animation-play-state:paused;}
+#timerDisp{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;color:var(--cream);letter-spacing:.1em;}
+.timer-lbl{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.15em;margin-top:6px;}
+.timer-btns{display:flex;justify-content:center;gap:14px;margin-top:22px;}
+.tbtn{padding:11px 26px;border:1px solid rgba(139,175,124,.35);background:transparent;color:var(--sage);font-family:'DM Sans',sans-serif;font-size:.83rem;letter-spacing:.08em;text-transform:uppercase;cursor:none;transition:all .3s;border-radius:2px;}
+.tbtn:hover,.tbtn.on{background:var(--sage);color:var(--deep);}
+.timer-list{display:flex;flex-direction:column;gap:10px;}
+.titem{padding:14px 18px;background:rgba(26,47,32,.3);border:1px solid rgba(139,175,124,.13);border-radius:2px;display:flex;align-items:center;gap:14px;cursor:none;transition:all .3s;}
+.titem:hover{background:rgba(26,47,32,.6);border-color:rgba(139,175,124,.3);}
+.titem.sel{border-color:var(--sage);background:rgba(139,175,124,.09);}
+.titem .ti-ico{font-size:1.25rem;}
+.titem .ti-name{flex:1;font-weight:500;font-size:.88rem;}
+.titem .ti-dur{font-size:1rem;color:var(--gold);font-family:'Bebas Neue';letter-spacing:.04em;}
+
+/* ═══════════════════════════════
+   ALARM SECTION
+═══════════════════════════════ */
+#alarm-sec{background:var(--forest2);}
+.alarm-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:52px;}
+.alarm-form{background:rgba(15,26,18,.6);border:1px solid rgba(139,175,124,.2);border-radius:6px;padding:28px;}
+.alarm-form h3{font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:.05em;margin-bottom:22px;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.form-group input,.form-group select{width:100%;background:rgba(15,26,18,.8);border:1px solid rgba(139,175,124,.22);color:var(--cream);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.88rem;border-radius:2px;outline:none;transition:border-color .3s;}
+.form-group input:focus,.form-group select:focus{border-color:var(--sage);}
+.btn-add-alarm{width:100%;background:var(--sage);color:var(--deep);border:none;padding:13px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase;border-radius:2px;cursor:none;transition:all .3s;margin-top:6px;}
+.btn-add-alarm:hover{background:var(--light-sage);}
+.alarm-list-box{background:rgba(15,26,18,.6);border:1px solid rgba(139,175,124,.2);border-radius:6px;padding:28px;}
+.alarm-list-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:.05em;margin-bottom:22px;}
+.alarm-list{display:flex;flex-direction:column;gap:10px;}
+.alarm-item{display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(26,47,32,.5);border:1px solid rgba(139,175,124,.15);border-radius:4px;transition:all .3s;}
+.alarm-item:hover{border-color:rgba(139,175,124,.32);}
+.alarm-item.ringing{border-color:var(--gold);background:rgba(212,168,83,.08);animation:ring .5s ease-in-out infinite alternate;}
+@keyframes ring{from{transform:translateX(-3px);}to{transform:translateX(3px);}}
+.alarm-time{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.06em;color:var(--cream);min-width:80px;}
+.alarm-info{flex:1;}
+.alarm-label{font-weight:500;font-size:.88rem;color:var(--cream);margin-bottom:2px;}
+.alarm-days{font-size:.72rem;color:var(--muted);}
+.alarm-toggle{width:44px;height:24px;background:rgba(139,175,124,.2);border-radius:12px;position:relative;cursor:none;transition:background .3s;border:none;flex-shrink:0;}
+.alarm-toggle.on{background:var(--sage);}
+.alarm-toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .3s;}
+.alarm-toggle.on::after{transform:translateX(20px);}
+.alarm-del{background:none;border:none;color:var(--muted);cursor:none;font-size:1rem;transition:color .3s;padding:4px;}
+.alarm-del:hover{color:#e05c5c;}
+.no-alarms{color:var(--muted);font-size:.88rem;text-align:center;padding:32px;opacity:.7;}
+
+/* ═══════════════════════════════
+   PROGRESS TRACKER
+═══════════════════════════════ */
+#progress-sec{background:var(--forest);}
+.progress-layout{display:grid;grid-template-columns:1fr 1.3fr;gap:52px;margin-top:52px;align-items:start;}
+.log-form{background:rgba(15,26,18,.6);border:1px solid rgba(139,175,124,.18);border-radius:6px;padding:26px;}
+.log-form h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.05em;margin-bottom:18px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-log{width:100%;background:var(--gold);color:var(--deep);border:none;padding:12px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;letter-spacing:.06em;text-transform:uppercase;border-radius:2px;cursor:none;transition:all .3s;margin-top:6px;}
+.btn-log:hover{background:#e8ba5e;}
+.chart-box{background:rgba(15,26,18,.6);border:1px solid rgba(139,175,124,.18);border-radius:6px;padding:26px;}
+.chart-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.05em;margin-bottom:20px;}
+.height-chart{display:flex;align-items:flex-end;gap:10px;height:180px;padding-top:12px;}
+.hbar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.hbar{width:100%;border-radius:3px 3px 0 0;background:linear-gradient(to top,var(--sage),var(--light-sage));transition:height 1s cubic-bezier(.34,1.56,.64,1);min-height:4px;}
+.hbar-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;}
+.hbar-val{font-size:.7rem;color:var(--sage);font-family:'Bebas Neue';letter-spacing:.04em;}
+.streak-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;}
+.streak-day{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;border:1px solid rgba(139,175,124,.2);color:var(--muted);transition:all .3s;font-family:'Bebas Neue';letter-spacing:.04em;}
+.streak-day.done{background:var(--sage);color:var(--deep);border-color:var(--sage);}
+.streak-day.today{border-color:var(--gold);color:var(--gold);}
+
+/* ═══════════════════════════════
+   SIGN IN MODAL
+═══════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);z-index:500;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--forest);border:1px solid rgba(139,175,124,.25);border-radius:10px;padding:38px;width:min(440px,92vw);position:relative;animation:mUp .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes mUp{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-close{position:absolute;top:15px;right:18px;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:none;transition:color .3s;}
+.modal-close:hover{color:var(--cream);}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.05em;margin-bottom:4px;}
+.modal p.sub{color:var(--muted);font-size:.85rem;margin-bottom:26px;}
+.social-btns{display:flex;flex-direction:column;gap:11px;margin-bottom:22px;}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:12px;padding:13px;border-radius:4px;font-size:.88rem;font-family:'DM Sans',sans-serif;font-weight:500;cursor:none;border:none;transition:all .3s;}
+.google-btn{background:#fff;color:#333;}
+.google-btn:hover{background:#f2f2f2;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.fb-btn{background:#1877F2;color:#fff;}
+.fb-btn:hover{background:#1465d8;transform:translateY(-2px);}
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:18px;color:var(--muted);font-size:.78rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(139,175,124,.2);}
+.finput{width:100%;background:rgba(15,26,18,.8);border:1px solid rgba(139,175,124,.22);color:var(--cream);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.88rem;border-radius:2px;outline:none;margin-bottom:12px;transition:border-color .3s;}
+.finput:focus{border-color:var(--sage);}
+.btn-modal{width:100%;background:var(--gold);color:var(--deep);border:none;padding:13px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase;border-radius:2px;cursor:none;transition:all .3s;margin-top:4px;}
+.btn-modal:hover{background:#e8ba5e;}
+.modal-sw{text-align:center;margin-top:14px;font-size:.83rem;color:var(--muted);}
+.modal-sw a{color:var(--sage);cursor:none;}
+
+/* ═══════════════════════════════
+   HOME WORKOUTS
+═══════════════════════════════ */
+#home-workouts{background:var(--deep);}
+.hw-filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin:36px 0 40px;}
+.hw-filter{padding:9px 22px;border:1px solid rgba(139,175,124,.25);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;border-radius:30px;cursor:none;transition:all .3s;}
+.hw-filter:hover{border-color:var(--sage);color:var(--sage);}
+.hw-filter.active{background:var(--sage);color:var(--deep);border-color:var(--sage);font-weight:600;}
+.hw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.hw-card{background:var(--forest);border:1px solid rgba(139,175,124,.13);border-radius:10px;overflow:hidden;transition:all .4s;cursor:none;position:relative;}
+.hw-card:hover{transform:translateY(-6px);border-color:rgba(139,175,124,.4);box-shadow:0 20px 50px rgba(0,0,0,.4);}
+.hw-card-thumb{height:160px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.hw-card-thumb .hw-emoji{font-size:5rem;z-index:1;transition:transform .4s;}
+.hw-card:hover .hw-emoji{transform:scale(1.15);}
+.hw-card-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(15,26,18,.9));}
+.hw-badge{position:absolute;top:12px;left:12px;z-index:2;font-size:.66rem;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+.hw-badge.beginner{background:rgba(139,175,124,.2);border:1px solid var(--sage);color:var(--sage);}
+.hw-badge.intermediate{background:rgba(212,168,83,.15);border:1px solid var(--gold);color:var(--gold);}
+.hw-badge.advanced{background:rgba(224,92,92,.15);border:1px solid #e05c5c;color:#e05c5c;}
+.hw-card-body{padding:18px 20px 22px;}
+.hw-cat-tag{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.hw-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.04em;margin-bottom:8px;}
+.hw-card p{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+.hw-meta{display:flex;gap:14px;font-size:.72rem;color:var(--muted);margin-bottom:16px;}
+.hw-meta span{color:var(--sage);}
+.hw-start-btn{width:100%;background:transparent;border:1px solid rgba(139,175,124,.3);color:var(--sage);padding:10px;font-family:'DM Sans',sans-serif;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;border-radius:4px;cursor:none;transition:all .3s;}
+.hw-start-btn:hover{background:var(--sage);color:var(--deep);}
+
+/* Workout Modal */
+.workout-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(12px);z-index:600;display:none;align-items:center;justify-content:center;padding:20px;}
+.workout-modal-overlay.open{display:flex;}
+.workout-modal{background:var(--forest);border:1px solid rgba(139,175,124,.25);border-radius:12px;width:min(720px,96vw);max-height:90vh;overflow-y:auto;animation:mUp .4s cubic-bezier(.34,1.56,.64,1);}
+.workout-modal::-webkit-scrollbar{width:4px;}
+.workout-modal::-webkit-scrollbar-thumb{background:rgba(139,175,124,.3);border-radius:2px;}
+.wm-header{padding:28px 32px 0;display:flex;justify-content:space-between;align-items:flex-start;}
+.wm-header h2{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.04em;}
+.wm-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:none;transition:color .3s;}
+.wm-close:hover{color:var(--cream);}
+.wm-body{padding:20px 32px 32px;}
+.wm-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+.wm-stat{background:rgba(15,26,18,.6);border:1px solid rgba(139,175,124,.15);border-radius:6px;padding:14px;text-align:center;}
+.wm-stat .ws-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--sage);letter-spacing:.04em;}
+.wm-stat .ws-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px;}
+.wm-exercises{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.wm-ex{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(15,26,18,.5);border:1px solid rgba(139,175,124,.12);border-radius:6px;transition:border-color .3s;}
+.wm-ex:hover{border-color:rgba(139,175,124,.3);}
+.wm-ex-num{width:28px;height:28px;background:var(--sage);color:var(--deep);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;}
+.wm-ex-ico{font-size:1.4rem;}
+.wm-ex-info{flex:1;}
+.wm-ex-name{font-weight:600;color:var(--cream);font-size:.9rem;margin-bottom:2px;}
+.wm-ex-detail{font-size:.75rem;color:var(--muted);}
+.wm-ex-sets{font-size:.82rem;color:var(--gold);font-family:'Bebas Neue';letter-spacing:.04em;font-size:1rem;}
+.wm-start-full{width:100%;background:var(--gold);color:var(--deep);border:none;padding:16px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:1rem;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;cursor:none;transition:all .3s;}
+.wm-start-full:hover{background:#e8ba5e;transform:translateY(-2px);}
+
+/* Toast notification (from ChatGPT v4 idea) */
+.toast{position:fixed;bottom:24px;left:24px;background:rgba(26,47,32,.96);border:1px solid rgba(139,175,124,.35);border-radius:8px;padding:14px 20px;z-index:800;display:none;animation:slideIn .4s ease;max-width:280px;}
+.toast.show{display:block;}
+.toast-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--sage);letter-spacing:.04em;margin-bottom:3px;}
+.toast-msg{font-size:.82rem;color:var(--muted);line-height:1.5;}
+
+/* FOOTER */
+footer{background:rgba(8,14,10,.9);padding:52px 80px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(139,175,124,.08);}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:2.3rem;letter-spacing:.1em;}
+.footer-logo span{color:var(--gold);}
+footer p{color:var(--muted);font-size:.82rem;}
+.footer-links{display:flex;gap:24px;}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;transition:color .3s;cursor:none;}
+.footer-links a:hover{color:var(--sage);}
+
+@media(max-width:900px){.hw-grid{grid-template-columns:1fr;}.wm-overview{grid-template-columns:repeat(2,1fr);}}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(28px);transition:all .8s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ALARM RINGING POPUP */
+.alarm-popup{position:fixed;top:80px;right:28px;background:rgba(26,47,32,.97);border:1px solid var(--gold);border-radius:8px;padding:20px 24px;z-index:400;display:none;animation:slideIn .4s ease;}
+.alarm-popup.show{display:block;}
+.alarm-popup h4{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);letter-spacing:.05em;margin-bottom:4px;}
+.alarm-popup p{font-size:.85rem;color:var(--muted);margin-bottom:14px;}
+.alarm-popup button{background:var(--sage);color:var(--deep);border:none;padding:8px 20px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.82rem;border-radius:2px;cursor:none;transition:all .3s;}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;}.hero-right{display:none;}
+  .programs-grid,.ex-layout,.nut-layout,.ai-layout,.timer-area,.alarm-layout,.progress-layout{grid-template-columns:1fr;}
+  .tab-content.active{grid-template-columns:1fr;}
+  section{padding:60px 24px;}
+  nav{padding:14px 22px;}
+  nav ul{display:none;}
+  footer{flex-direction:column;gap:20px;text-align:center;}
+  #musicPlayer{bottom:16px;right:16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="sp" id="sp"></div>
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="curRing"></div>
+<div id="particles"></div>
+
+<!-- ALARM POPUP -->
+<div class="alarm-popup" id="alarmPopup">
+  <h4>⏰ WORKOUT TIME!</h4>
+  <p id="alarmPopupMsg">Time to start your session!</p>
+  <button onclick="dismissAlarm()">Dismiss</button>
+</div>
+
+<!-- SIGN IN MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="authTitle">JOIN FITRISE</h2>
+    <p class="sub" id="authSub">Start your journey to grow taller & stronger</p>
+    <div class="social-btns">
+      <button class="social-btn google-btn" onclick="socialLogin('Google')">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continue with Google
+      </button>
+      <button class="social-btn fb-btn" onclick="socialLogin('Facebook')">
+        <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z"/></svg>
+        Continue with Facebook
+      </button>
+    </div>
+    <div class="divider">or sign up with email</div>
+    <input class="finput" type="text" id="authName" placeholder="Your name" style="display:none">
+    <input class="finput" type="email" placeholder="Email address" id="authEmail">
+    <input class="finput" type="password" placeholder="Password" id="authPass">
+    <button class="btn-modal" onclick="doAuth()">Get Started Free</button>
+    <div class="modal-sw">Already have an account? <a onclick="toggleAuth()">Sign in</a></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Fit<span>Rise</span></div>
+  <ul>
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#exercises">Exercises</a></li>
+    <li><a href="#yoga">Yoga</a></li>
+    <li><a href="#nutrition">Nutrition</a></li>
+    <li><a href="#ai">AI Coach</a></li>
+    <li><a href="#home-workouts">Workouts</a></li>
+    <li><a href="#alarm-sec">Alarms</a></li>
+    <li><a href="#" class="nav-cta" onclick="openModal(event)">Get Started</a></li>
+  </ul>
+</nav>
+
+<!-- ══ FLOATING MUSIC PLAYER ══ -->
+<div id="musicPlayer">
+  <div class="mp-mini" onclick="toggleMusicPlayer()">🎵</div>
+  <div class="mp-full">
+    <div class="mp-header">
+      <div class="mp-title">🎵 NATURE SOUNDS</div>
+      <button class="mp-toggle" onclick="toggleMusicPlayer()" title="Minimize">−</button>
+    </div>
+
+    <!-- Visualizer -->
+    <div class="mp-viz" id="mpViz">
+      <div class="vb"></div><div class="vb"></div><div class="vb"></div>
+      <div class="vb"></div><div class="vb"></div><div class="vb"></div>
+      <div class="vb"></div><div class="vb"></div><div class="vb"></div>
+      <div class="vb"></div><div class="vb"></div><div class="vb"></div>
+    </div>
+
+    <!-- Current track -->
+    <div class="mp-track">
+      <div class="mp-track-name" id="mpTrackName">Forest Morning Calm</div>
+      <div class="mp-track-type" id="mpTrackType">🌿 Nature · Meditation</div>
+    </div>
+
+    <!-- Track list -->
+    <div class="mp-list" id="mpList"></div>
+
+    <!-- Controls -->
+    <div class="mp-controls">
+      <button class="mp-btn" onclick="prevTrack()" title="Previous">⏮</button>
+      <button class="mp-btn mp-play" id="mpPlayBtn" onclick="togglePlay()">▶</button>
+      <button class="mp-btn" onclick="nextTrack()" title="Next">⏭</button>
+      <button class="mp-btn" onclick="toggleShuffle()" id="shuffleBtn" title="Shuffle">🔀</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="mp-bar-wrap">
+      <div class="mp-bar-label">
+        <span id="mpCurTime">0:00</span>
+        <span id="mpDurTime">3:00</span>
+      </div>
+      <div class="mp-bar" id="mpProgressBar">
+        <div class="mp-bar-fill" id="mpFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Volume -->
+    <div class="mp-vol">
+      <span class="mp-vol-icon">🔈</span>
+      <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="70" oninput="setVolume(this.value)">
+      <span class="mp-vol-icon">🔊</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-left">
+    <div class="hero-tag">AI-Powered Fitness · Music · Nutrition</div>
+    <h1>GROW<br><em>Taller</em><br>STRONGER</h1>
+    <p class="hero-desc">Science-backed height growth exercises, yoga flows, a nature music player & AI coach — everything in one beautiful place.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="openModal(event)">Start Your Journey</button>
+      <button class="btn-outline" onclick="document.getElementById('musicPlayer').scrollIntoView()">🎵 Play Music</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">50+</div><div class="stat-label">Exercises</div></div>
+      <div><div class="stat-num">12</div><div class="stat-label">Yoga Flows</div></div>
+      <div><div class="stat-num">20</div><div class="stat-label">Nature Tracks</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="float-card fc1"><div class="fc-title">Today's Streak</div><div class="fc-val">14 DAYS 🔥</div></div>
+      <div class="float-card fc2"><div class="fc-title">Music Playing</div><div class="fc-val">🎵 Forest Calm</div></div>
+      <div class="visual-badge"><strong>Morning Flow Complete ✓</strong>Dead Hang · Cobra · Sun Salutation</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROGRAMS ═══ -->
+<section id="programs">
+  <div class="section-tag">What We Offer</div>
+  <h2>CHOOSE YOUR <span>PATH</span></h2>
+  <div class="programs-grid reveal">
+    <div class="pg-card"><span class="pg-icon">📏</span><h3>Height Growth</h3><p>Spinal decompression, posture correction and stretches to maximize your natural height potential.</p><div class="pg-meta"><span>8 Weeks</span><span class="s">·</span><span>20 min/day</span></div></div>
+    <div class="pg-card"><span class="pg-icon">🧘</span><h3>Yoga Mastery</h3><p>From sun salutations to advanced inversions — build flexibility, balance, and deep calm.</p><div class="pg-meta"><span>12 Weeks</span><span class="s">·</span><span>30–45 min</span></div></div>
+    <div class="pg-card"><span class="pg-icon">💪</span><h3>Full Body</h3><p>Core stability and posture muscles that support growth and maintain a tall, confident stance.</p><div class="pg-meta"><span>10 Weeks</span><span class="s">·</span><span>40 min</span></div></div>
+  </div>
+</section>
+
+<!-- ═══ EXERCISES ═══ -->
+<section id="exercises">
+  <div class="section-tag">Height Growth</div>
+  <h2>GROW <span>EXERCISES</span></h2>
+  <div class="ex-layout reveal">
+    <div class="ex-list" id="exList"></div>
+    <div class="ex-detail" id="exDetail"></div>
+  </div>
+</section>
+
+<!-- ═══ YOGA TABS ═══ -->
+<section id="yoga">
+  <div class="section-tag">Poses & Stretches</div>
+  <h2>YOGA & <span>STRETCHES</span></h2>
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('yoga-tab',this)">Yoga Poses</button>
+    <button class="tab" onclick="switchTab('stretch-tab',this)">Height Stretches</button>
+  </div>
+  <div class="tab-content active reveal" id="yoga-tab">
+    <div class="pose-card"><div class="pose-emoji">🙏</div><div><div class="pose-name">Mountain Pose</div><div class="pose-desc">Foundation of all standing poses. Improves posture and elongates the spine.</div><div class="pose-tags"><span class="ptag">Beginner</span><span class="ptag">Posture</span><span class="ptag">2 min</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">🌳</div><div><div class="pose-name">Tree Pose</div><div class="pose-desc">Builds balance and strengthens the entire leg creating upward growth energy.</div><div class="pose-tags"><span class="ptag">Beginner</span><span class="ptag">Balance</span><span class="ptag">1 min</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">⬇️</div><div><div class="pose-name">Downward Dog</div><div class="pose-desc">Full-body stretch that lengthens the spine, hamstrings, and calves.</div><div class="pose-tags"><span class="ptag">Beginner</span><span class="ptag">Stretch</span><span class="ptag">3 min</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">🔥</div><div><div class="pose-name">Warrior III</div><div class="pose-desc">Extends the body into one long line, strengthening the entire back.</div><div class="pose-tags"><span class="ptag">Intermediate</span><span class="ptag">Strength</span><span class="ptag">1 min</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">🦅</div><div><div class="pose-name">Camel Pose</div><div class="pose-desc">Deep backbend stretching the front spine and hip flexors powerfully.</div><div class="pose-tags"><span class="ptag">Advanced</span><span class="ptag">Backbend</span><span class="ptag">2 min</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">🌙</div><div><div class="pose-name">Half Moon</div><div class="pose-desc">Opens hips and elongates the side body, creating space between vertebrae.</div><div class="pose-tags"><span class="ptag">Intermediate</span><span class="ptag">Flexibility</span></div></div></div>
+  </div>
+  <div class="tab-content" id="stretch-tab">
+    <div class="pose-card"><div class="pose-emoji">🏋️</div><div><div class="pose-name">Dead Hang</div><div class="pose-desc">Hang from a bar to fully decompress the spine and rehydrate discs.</div><div class="pose-tags"><span class="ptag">All Levels</span><span class="ptag">Spinal</span><span class="ptag">2 min</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">🤸</div><div><div class="pose-name">Cobra Stretch</div><div class="pose-desc">Push up to extend the spine and open the chest for a powerful backbend.</div><div class="pose-tags"><span class="ptag">Beginner</span><span class="ptag">Spine</span><span class="ptag">2 min</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">🦵</div><div><div class="pose-name">Standing Toe Touch</div><div class="pose-desc">Stretches the entire posterior chain — lower back through calves.</div><div class="pose-tags"><span class="ptag">Beginner</span><span class="ptag">Hamstrings</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">💤</div><div><div class="pose-name">Child's Pose</div><div class="pose-desc">Restful stretch that gently elongates the lower back and releases tension.</div><div class="pose-tags"><span class="ptag">Recovery</span><span class="ptag">Lower Back</span><span class="ptag">3 min</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">⬆️</div><div><div class="pose-name">Wall Extension</div><div class="pose-desc">Stand against a wall, extend arms overhead, press spine flat to improve posture.</div><div class="pose-tags"><span class="ptag">Beginner</span><span class="ptag">Posture</span></div></div></div>
+    <div class="pose-card"><div class="pose-emoji">🌉</div><div><div class="pose-name">Bridge Pose</div><div class="pose-desc">Lifts and extends the spine while strengthening glutes and back muscles.</div><div class="pose-tags"><span class="ptag">Beginner</span><span class="ptag">Spine</span></div></div></div>
+  </div>
+</section>
+
+<!-- ═══ NUTRITION ═══ -->
+<section id="nutrition">
+  <div class="section-tag">Meal & Nutrition Planner</div>
+  <h2>FUEL YOUR <span>GROWTH</span></h2>
+  <div class="nut-layout reveal">
+    <div class="nut-categories">
+      <div class="nut-cat"><div class="nc-header"><div class="nc-icon">🦴</div><div class="nc-title">Bone Builders</div></div><div class="nc-foods"><span class="nc-food">🥛 Milk</span><span class="nc-food">🧀 Cheese</span><span class="nc-food">🥦 Broccoli</span><span class="nc-food">🐟 Salmon</span><span class="nc-food">☀️ Vitamin D</span></div></div>
+      <div class="nut-cat"><div class="nc-header"><div class="nc-icon">💪</div><div class="nc-title">Growth Proteins</div></div><div class="nc-foods"><span class="nc-food">🥚 Eggs</span><span class="nc-food">🍗 Chicken</span><span class="nc-food">🌱 Soy</span><span class="nc-food">🥩 Beef</span><span class="nc-food">🫘 Lentils</span></div></div>
+      <div class="nut-cat"><div class="nc-header"><div class="nc-icon">🌿</div><div class="nc-title">Anti-Inflammatory</div></div><div class="nc-foods"><span class="nc-food">🫐 Blueberries</span><span class="nc-food">🥑 Avocado</span><span class="nc-food">🍫 Dark Choc</span><span class="nc-food">🫚 Olive Oil</span></div></div>
+      <div class="nut-cat"><div class="nc-header"><div class="nc-icon">⚡</div><div class="nc-title">Pre-Workout Energy</div></div><div class="nc-foods"><span class="nc-food">🍌 Banana</span><span class="nc-food">🥣 Oats</span><span class="nc-food">🍯 Honey</span><span class="nc-food">☕ Green Tea</span></div></div>
+    </div>
+    <div class="meal-planner">
+      <h3>Daily Meal Plan</h3>
+      <div class="meal-slot">
+        <div class="meal-slot-title">🌅 Breakfast</div>
+        <div class="meal-items">
+          <div class="meal-item"><div class="mi-ico">🥣</div><div class="mi-name">Oats with Almond Milk</div><div class="mi-cal">320 cal</div><div class="mi-tag">Carbs</div></div>
+          <div class="meal-item"><div class="mi-ico">🥚</div><div class="mi-name">2 Boiled Eggs</div><div class="mi-cal">140 cal</div><div class="mi-tag">Protein</div></div>
+          <div class="meal-item"><div class="mi-ico">🍌</div><div class="mi-name">Banana</div><div class="mi-cal">90 cal</div><div class="mi-tag">Potassium</div></div>
+        </div>
+      </div>
+      <div class="meal-slot">
+        <div class="meal-slot-title">☀️ Lunch</div>
+        <div class="meal-items">
+          <div class="meal-item"><div class="mi-ico">🍗</div><div class="mi-name">Grilled Chicken Breast</div><div class="mi-cal">280 cal</div><div class="mi-tag">Protein</div></div>
+          <div class="meal-item"><div class="mi-ico">🥦</div><div class="mi-name">Steamed Broccoli & Veggies</div><div class="mi-cal">80 cal</div><div class="mi-tag">Calcium</div></div>
+          <div class="meal-item"><div class="mi-ico">🍚</div><div class="mi-name">Brown Rice</div><div class="mi-cal">200 cal</div><div class="mi-tag">Carbs</div></div>
+        </div>
+      </div>
+      <div class="meal-slot">
+        <div class="meal-slot-title">🌙 Dinner</div>
+        <div class="meal-items">
+          <div class="meal-item"><div class="mi-ico">🐟</div><div class="mi-name">Baked Salmon</div><div class="mi-cal">350 cal</div><div class="mi-tag">Omega-3</div></div>
+          <div class="meal-item"><div class="mi-ico">🥛</div><div class="mi-name">Warm Milk with Turmeric</div><div class="mi-cal">120 cal</div><div class="mi-tag">Bone Health</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ AI CHAT ═══ -->
+<section id="ai">
+  <div class="section-tag">Artificial Intelligence</div>
+  <h2>YOUR PERSONAL <span>AI COACH</span></h2>
+  <div class="ai-layout reveal">
+    <div class="ai-chat">
+      <div class="ai-chat-header"><div class="ai-dot"></div><span>FitRise AI Coach · Online</span></div>
+      <div class="chat-msgs" id="chatMsgs">
+        <div class="msg msg-ai">👋 Hey! I'm your FitRise AI coach. Ask me about height growth, yoga, nutrition, or music for your workout!</div>
+        <div class="msg msg-user">What's the best morning routine for height?</div>
+        <div class="msg msg-ai">Great choice! Try this 20-min morning flow: Start with 2 min Dead Hang → Cobra Stretch → Cat-Cow × 15 reps → Child's Pose to finish. Do this on an empty stomach for best spinal decompression. Pair it with calming nature music to keep your focus! 🌿</div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="Ask your AI coach..." onkeypress="handleKey(event)">
+        <button class="send-btn" onclick="sendChat()">➤</button>
+      </div>
+    </div>
+    <div class="ai-features">
+      <div class="af"><div class="af-icon">🎯</div><div><div class="af-title">Personalized Plans</div><div class="af-desc">AI analyzes your age, height, and goals to create a custom workout plan just for you.</div></div></div>
+      <div class="af"><div class="af-icon">🎵</div><div><div class="af-title">Music Recommendations</div><div class="af-desc">The AI picks the perfect nature soundtrack based on your current exercise intensity.</div></div></div>
+      <div class="af"><div class="af-icon">📈</div><div><div class="af-title">Progress Tracking</div><div class="af-desc">Log sessions, track height measurements, and get AI insights on what's working best.</div></div></div>
+      <div class="af"><div class="af-icon">🥗</div><div><div class="af-title">Nutrition Guidance</div><div class="af-desc">Get personalized meal recommendations optimized for bone health and growth hormone support.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TIMER ═══ -->
+<section id="timer-sec">
+  <div class="section-tag">Workout Timer</div>
+  <h2>START YOUR <span>SESSION</span></h2>
+  <div class="timer-area reveal">
+    <div class="timer-display">
+      <div class="timer-ring" id="timerRing"><div id="timerDisp">00:00</div></div>
+      <div class="timer-lbl" id="timerLbl">Select an exercise</div>
+      <div class="timer-btns">
+        <button class="tbtn" id="startBtn" onclick="startTimer()">Start</button>
+        <button class="tbtn" onclick="resetTimer()">Reset</button>
+      </div>
+    </div>
+    <div class="timer-list" id="timerList"></div>
+  </div>
+</section>
+
+<!-- ═══ ALARM ═══ -->
+<section id="alarm-sec">
+  <div class="section-tag">Smart Alarms</div>
+  <h2>NEVER MISS A <span>SESSION</span></h2>
+  <div class="alarm-layout reveal">
+    <div class="alarm-form">
+      <h3>Set Workout Alarm</h3>
+      <div class="form-group"><label>Alarm Time</label><input type="time" id="alarmTime" value="07:00"></div>
+      <div class="form-group"><label>Label</label><input type="text" id="alarmLabel" placeholder="e.g. Morning Stretch"></div>
+      <div class="form-group"><label>Exercise Type</label>
+        <select id="alarmExType">
+          <option>Height Growth Routine</option>
+          <option>Morning Yoga Flow</option>
+          <option>Full Body Stretch</option>
+          <option>Dead Hang Session</option>
+          <option>Meditation & Breathing</option>
+          <option>Evening Wind-Down</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Repeat</label>
+        <select id="alarmRepeat">
+          <option>Every Day</option>
+          <option>Weekdays (Mon–Fri)</option>
+          <option>Weekends</option>
+          <option>Once</option>
+        </select>
+      </div>
+      <button class="btn-add-alarm" onclick="addAlarm()">+ Add Alarm</button>
+    </div>
+    <div class="alarm-list-box">
+      <h3>Your Alarms</h3>
+      <div class="alarm-list" id="alarmList">
+        <div class="alarm-item">
+          <div class="alarm-time">07:00</div>
+          <div class="alarm-info"><div class="alarm-label">Morning Stretch 🌅</div><div class="alarm-days">Every Day · Height Growth Routine</div></div>
+          <button class="alarm-toggle on" onclick="toggleAlarmToggle(this)"></button>
+          <button class="alarm-del" onclick="delAlarm(this)">🗑</button>
+        </div>
+        <div class="alarm-item">
+          <div class="alarm-time">18:30</div>
+          <div class="alarm-info"><div class="alarm-label">Evening Yoga 🧘</div><div class="alarm-days">Weekdays · Yoga Flow</div></div>
+          <button class="alarm-toggle on" onclick="toggleAlarmToggle(this)"></button>
+          <button class="alarm-del" onclick="delAlarm(this)">🗑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROGRESS TRACKER ═══ -->
+<section id="progress-sec">
+  <div class="section-tag">Progress Tracker</div>
+  <h2>TRACK YOUR <span>GROWTH</span></h2>
+  <div class="progress-layout reveal">
+    <div class="log-form">
+      <h3>Log Today's Session</h3>
+      <div class="form-group"><label>Exercise</label>
+        <select><option>Dead Hang</option><option>Cobra Stretch</option><option>Cat-Cow</option><option>Yoga Flow</option><option>Full Body</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Duration (min)</label><input type="number" placeholder="20" min="1"></div>
+        <div class="form-group"><label>Height (cm)</label><input type="number" id="heightInput" placeholder="170" min="100"></div>
+      </div>
+      <div class="form-group"><label>Energy Level</label>
+        <select><option>💪 High Energy</option><option>😊 Medium</option><option>😴 Low Energy</option></select>
+      </div>
+      <div class="form-group"><label>Notes</label><input type="text" placeholder="How did it feel?"></div>
+      <button class="btn-log" onclick="logSession()">Log Session ✓</button>
+    </div>
+    <div class="chart-box">
+      <h3>Height Progress</h3>
+      <div class="height-chart" id="heightChart"></div>
+      <div style="margin-top:24px;">
+        <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;">Weekly Streak</div>
+        <div class="streak-row" id="streakRow"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOME WORKOUTS ═══ -->
+<section id="home-workouts">
+  <div class="section-tag">No Gym Needed</div>
+  <h2>HOME <span>WORKOUTS</span></h2>
+  <p style="color:var(--muted);font-size:.95rem;max-width:520px;line-height:1.7;font-weight:300;">All levels · All categories · Zero equipment. Build strength, burn fat, and grow taller from the comfort of your home.</p>
+
+  <!-- Filter Bar -->
+  <div class="hw-filter-bar">
+    <button class="hw-filter active" onclick="filterWorkouts('all',this)">All</button>
+    <button class="hw-filter" onclick="filterWorkouts('bodyweight',this)">💪 Bodyweight</button>
+    <button class="hw-filter" onclick="filterWorkouts('hiit',this)">🔥 HIIT & Cardio</button>
+    <button class="hw-filter" onclick="filterWorkouts('core',this)">🎯 Core & Abs</button>
+    <button class="hw-filter" onclick="filterWorkouts('yoga',this)">🧘 Yoga & Stretch</button>
+    <button class="hw-filter" onclick="filterWorkouts('beginner',this)">🌱 Beginner</button>
+    <button class="hw-filter" onclick="filterWorkouts('advanced',this)">⚡ Advanced</button>
+  </div>
+
+  <div class="hw-grid reveal" id="hwGrid"></div>
+</section>
+
+<!-- WORKOUT DETAIL MODAL -->
+<div class="workout-modal-overlay" id="workoutModal">
+  <div class="workout-modal">
+    <div class="wm-header">
+      <h2 id="wmTitle">Workout</h2>
+      <button class="wm-close" onclick="closeWorkoutModal()">✕</button>
+    </div>
+    <div class="wm-body">
+      <div class="wm-overview" id="wmOverview"></div>
+      <div style="font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:.06em;color:var(--sage);margin-bottom:14px;">EXERCISES</div>
+      <div class="wm-exercises" id="wmExercises"></div>
+      <button class="wm-start-full" onclick="startWorkoutTimer()">🚀 Start This Workout</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST (from ChatGPT v4 idea) -->
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">Welcome!</div>
+  <div class="toast-msg" id="toastMsg">Start by exploring a workout below.</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div><div class="footer-logo">Fit<span>Rise</span></div><p style="margin-top:6px;">Grow taller. Live fuller. Every day.</p></div>
+  <div class="footer-links"><a href="#">About</a><a href="#">Privacy</a><a href="#">Contact</a></div>
+  <p>© 2026 FitRise · All rights reserved</p>
+</footer>
+
+<script>
+// ══════════════════════════
+// CURSOR
+// ══════════════════════════
+const cur = document.getElementById('cur');
+const curRing = document.getElementById('curRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=(mx-5)+'px';cur.style.top=(my-5)+'px';});
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;curRing.style.left=(rx-16)+'px';curRing.style.top=(ry-16)+'px';requestAnimationFrame(animRing);})();
+
+// SCROLL PROGRESS
+window.addEventListener('scroll',()=>{
+  document.getElementById('sp').style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';
+});
+
+// REVEAL
+const revEls=document.querySelectorAll('.reveal');
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1}).observe;
+revEls.forEach(el=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.08}).observe(el));
+
+// PARTICLES
+(function(){
+  const pc=document.getElementById('particles');
+  const colors=['#8BAF7C','#D4A853','#C8DEC0','#6B7C6E'];
+  for(let i=0;i<28;i++){
+    const p=document.createElement('div');
+    p.className='p';
+    const s=Math.random()*6+3;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*18+12}s;animation-delay:${Math.random()*10}s;`;
+    pc.appendChild(p);
+  }
+})();
+
+// ══════════════════════════
+// MUSIC PLAYER
+// ══════════════════════════
+const tracks=[
+  {name:'Forest Morning Calm',type:'🌿 Nature · Meditation',icon:'🌲',dur:180,bpm:60},
+  {name:'Ocean Waves Deep',type:'🌊 Ocean · Relaxation',icon:'🌊',dur:240,bpm:55},
+  {name:'Bamboo Wind Chimes',type:'🎋 Asian · Zen',icon:'🎋',dur:200,bpm:65},
+  {name:'Rainy Day Focus',type:'🌧️ Rain · Concentration',icon:'🌧️',dur:300,bpm:58},
+  {name:'Birds at Dawn',type:'🐦 Nature · Awakening',icon:'🐦',dur:190,bpm:70},
+  {name:'Mountain Stream',type:'💧 Water · Peace',icon:'🏔️',dur:220,bpm:62},
+  {name:'Deep Forest Night',type:'🦉 Nature · Sleep',icon:'🦉',dur:360,bpm:48},
+  {name:'Yoga Flow Ambient',type:'🧘 Yoga · Focus',icon:'🧘',dur:270,bpm:72},
+  {name:'Sunrise Meditation',type:'☀️ Morning · Energy',icon:'☀️',dur:210,bpm:68},
+  {name:'Sacred Tibetan Bowls',type:'🔔 Spiritual · Healing',icon:'🔔',dur:300,bpm:45},
+  {name:'Garden of Serenity',type:'🌸 Floral · Calm',icon:'🌸',dur:195,bpm:60},
+  {name:'Thunder & Rain',type:'⛈️ Storm · Power',icon:'⛈️',dur:250,bpm:52},
+  {name:'Gentle Creek Flow',type:'💧 Water · Mindfulness',icon:'🌿',dur:280,bpm:58},
+  {name:'Enchanted Forest',type:'✨ Magical · Focus',icon:'✨',dur:230,bpm:64},
+  {name:'Breath & Stillness',type:'💨 Breathwork · Reset',icon:'💨',dur:400,bpm:40},
+  {name:'Tropical Canopy',type:'🦜 Tropical · Alive',icon:'🦜',dur:215,bpm:72},
+  {name:'Moonlit Meadow',type:'🌙 Night · Rest',icon:'🌙',dur:290,bpm:50},
+  {name:'Himalayan Wind',type:'🏔️ Mountain · Vast',icon:'🏔️',dur:260,bpm:55},
+  {name:'Spring Blossom',type:'🌺 Spring · Joy',icon:'🌺',dur:175,bpm:76},
+  {name:'Deep Earth Hum',type:'🌍 Grounding · Strength',icon:'🌍',dur:320,bpm:43},
+];
+
+let curTIdx=0,isPlaying=false,shuffle=false,elapsed=0,timerInterval2=null;
+
+function fmtTime(s){return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;}
+
+function buildMpList(){
+  const list=document.getElementById('mpList');
+  list.innerHTML=tracks.map((t,i)=>`
+    <div class="mp-item${i===curTIdx?' active':''}" onclick="selectTrack(${i})">
+      <div class="mp-item-icon">${t.icon}</div>
+      <div class="mp-item-info">
+        <div class="mp-item-name">${t.name}</div>
+        <div class="mp-item-cat">${t.type}</div>
+      </div>
+      <div class="mp-item-dur">${fmtTime(t.dur)}</div>
+    </div>`).join('');
+}
+
+function updateMpUI(){
+  const t=tracks[curTIdx];
+  document.getElementById('mpTrackName').textContent=t.name;
+  document.getElementById('mpTrackType').textContent=t.type;
+  document.getElementById('mpDurTime').textContent=fmtTime(t.dur);
+  document.getElementById('mpCurTime').textContent=fmtTime(elapsed);
+  document.getElementById('mpFill').style.width=(elapsed/t.dur*100)+'%';
+  document.querySelectorAll('.mp-item').forEach((el,i)=>el.classList.toggle('active',i===curTIdx));
+}
+
+function selectTrack(i){curTIdx=i;elapsed=0;updateMpUI();if(isPlaying){clearInterval(timerInterval2);startPlayback();}}
+
+function togglePlay(){
+  isPlaying=!isPlaying;
+  document.getElementById('mpPlayBtn').textContent=isPlaying?'⏸':'▶';
+  document.getElementById('mpViz').classList.toggle('paused',!isPlaying);
+  if(isPlaying){startPlayback();}else{clearInterval(timerInterval2);}
+}
+
+function startPlayback(){
+  clearInterval(timerInterval2);
+  timerInterval2=setInterval(()=>{
+    elapsed++;
+    if(elapsed>=tracks[curTIdx].dur){elapsed=0;nextTrack();}
+    updateMpUI();
+  },1000);
+}
+
+function prevTrack(){elapsed=0;curTIdx=(curTIdx-1+tracks.length)%tracks.length;updateMpUI();}
+function nextTrack(){elapsed=0;curTIdx=shuffle?Math.floor(Math.random()*tracks.length):(curTIdx+1)%tracks.length;updateMpUI();}
+function toggleShuffle(){shuffle=!shuffle;document.getElementById('shuffleBtn').style.opacity=shuffle?'1':'.5';}
+function setVolume(v){/* visual only */}
+function toggleMusicPlayer(){document.getElementById('musicPlayer').classList.toggle('minimized');}
+
+buildMpList();
+updateMpUI();
+
+// ══════════════════════════
+// EXERCISES
+// ══════════════════════════
+const exData=[
+  {ico:'🏋️',name:'Dead Hang',type:'Spinal Decompression',badge:'Top Pick',
+   desc:'Hang from a bar to fully decompress the spine and rehydrate intervertebral discs.',
+   steps:['Find a sturdy pull-up bar at a suitable height','Grip the bar shoulder-width apart, palms forward','Lift your feet and let your body hang fully relaxed','Release all tension in your spine and breathe deeply','Hold for 20–60 seconds per rep','Aim for 3–5 sets daily for best results'],
+   dur:'2 MIN',sets:'3–5',freq:'Daily'},
+  {ico:'🤸',name:'Cobra Stretch',type:'Spine Extension',badge:'',
+   desc:'Extends the thoracic and lumbar spine, reversing poor posture and strengthening back extensors.',
+   steps:['Lie face down with hands under shoulders','Press palms into the floor and lift your chest','Keep elbows slightly bent, shoulders relaxed','Hold at the top, gazing slightly upward','Lower down slowly and repeat','Do 5–10 reps with increasing hold time'],
+   dur:'1 MIN',sets:'5–10',freq:'Daily'},
+  {ico:'🙆',name:'Cat-Cow',type:'Spinal Mobility',badge:'',
+   desc:'Cycles the full spine through flexion and extension, improving disc health and mobility.',
+   steps:['Start on all fours, wrists under shoulders','COW: Inhale, drop belly, lift head and tailbone','CAT: Exhale, round spine up, tuck chin','Flow between positions with your breath','Do 10–15 full breath cycles per set','Move slowly, feeling each vertebra'],
+   dur:'1:30',sets:'3',freq:'Daily'},
+  {ico:'🧗',name:'Pelvic Tilt',type:'Posture Alignment',badge:'',
+   desc:'Corrects anterior pelvic tilt, making you appear shorter. Aligns pelvis for optimal posture.',
+   steps:['Lie on your back, knees bent, feet flat','Feel the natural curve in your lower back','Exhale and flatten your lower back to the floor','Tighten abs and squeeze glutes lightly','Hold 5 seconds then release','Repeat 15–20 times for 2–3 sets'],
+   dur:'0:45',sets:'2–3',freq:'Daily'},
+  {ico:'🏊',name:'Superman Pose',type:'Back Strengthening',badge:'',
+   desc:'Strengthens the entire posterior chain — essential for upright posture and apparent height.',
+   steps:['Lie face down, arms extended overhead','Simultaneously lift arms, chest, and legs','Squeeze glutes and back at the top','Hold 2–3 seconds, imagining you are flying','Lower slowly back to start','Repeat 10–15 reps for 3 sets'],
+   dur:'1 MIN',sets:'3',freq:'5x/week'},
+  {ico:'🌉',name:'Bridge Pose',type:'Spinal Extension',badge:'',
+   desc:'Lifts and extends the lumbar spine while activating glutes. Restores natural spine curves.',
+   steps:['Lie on your back, knees bent, feet hip-width','Press feet firmly into the floor','Inhale and lift hips toward the ceiling','Squeeze glutes and core — form a diagonal line','Hold 20–30 seconds, breathing steadily','Lower slowly on exhale. Repeat 8–12 times'],
+   dur:'0:45',sets:'3',freq:'Daily'},
+];
+
+function buildExList(){
+  document.getElementById('exList').innerHTML=exData.map((e,i)=>`
+    <div class="ex-item${i===0?' active':''}" onclick="showEx(${i})">
+      <div class="ei-ico">${e.ico}</div>
+      <div><div class="ei-name">${e.name}</div><div class="ei-type">${e.type}</div></div>
+      ${e.badge?`<div class="ei-badge">${e.badge}</div>`:''}
+    </div>`).join('');
+  showEx(0);
+}
+function showEx(i){
+  document.querySelectorAll('.ex-item').forEach((el,j)=>el.classList.toggle('active',j===i));
+  const e=exData[i];
+  document.getElementById('exDetail').innerHTML=`
+    <div class="ed-header"><div class="ed-icon">${e.ico}</div><div><div class="ed-title">${e.name}</div><div class="ed-sub">${e.type}</div></div></div>
+    <p class="ed-desc">${e.desc}</p>
+    <ul class="steps">${e.steps.map((s,j)=>`<li><div class="snum">${j+1}</div><div>${s}</div></li>`).join('')}</ul>
+    <div class="ed-metrics">
+      <div class="mbox"><div class="mv">${e.dur}</div><div class="ml">Duration</div></div>
+      <div class="mbox"><div class="mv">${e.sets}</div><div class="ml">Sets</div></div>
+      <div class="mbox"><div class="mv">${e.freq}</div><div class="ml">Frequency</div></div>
+    </div>`;
+}
+buildExList();
+
+// TABS
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════
+// WORKOUT TIMER
+// ══════════════════════════
+const timerItems=[
+  {ico:'🏋️',name:'Dead Hang',sec:120},
+  {ico:'🤸',name:'Cobra Stretch',sec:60},
+  {ico:'🙆',name:'Cat-Cow Flow',sec:90},
+  {ico:'💤',name:"Child's Pose",sec:180},
+  {ico:'🌉',name:'Bridge Pose',sec:45},
+  {ico:'⬇️',name:'Downward Dog',sec:60},
+];
+let tiLeft=120,tiRunning=false,tiIntvl=null;
+
+document.getElementById('timerList').innerHTML=timerItems.map((t,i)=>`
+  <div class="titem${i===0?' sel':''}" onclick="selTimer(this,${t.sec},'${t.name}')">
+    <div class="ti-ico">${t.ico}</div>
+    <div class="ti-name">${t.name}</div>
+    <div class="ti-dur">${fmtTime(t.sec)}</div>
+  </div>`).join('');
+
+function updTimerDisp(){const m=Math.floor(tiLeft/60).toString().padStart(2,'0'),s=(tiLeft%60).toString().padStart(2,'0');document.getElementById('timerDisp').textContent=`${m}:${s}`;}
+function selTimer(el,sec,name){document.querySelectorAll('.titem').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');resetTimer();tiLeft=sec;document.getElementById('timerLbl').textContent=name;updTimerDisp();}
+function startTimer(){
+  if(tiRunning){clearInterval(tiIntvl);tiRunning=false;document.getElementById('startBtn').textContent='Resume';document.getElementById('startBtn').classList.remove('on');document.getElementById('timerRing').classList.add('paused');}
+  else{tiRunning=true;document.getElementById('startBtn').textContent='Pause';document.getElementById('startBtn').classList.add('on');document.getElementById('timerRing').classList.remove('paused');
+    tiIntvl=setInterval(()=>{if(tiLeft<=0){clearInterval(tiIntvl);tiRunning=false;document.getElementById('startBtn').textContent='Done ✓';document.getElementById('timerLbl').textContent='Great work! 🎉';return;}tiLeft--;updTimerDisp();},1000);}
+}
+function resetTimer(){clearInterval(tiIntvl);tiRunning=false;document.getElementById('startBtn').textContent='Start';document.getElementById('startBtn').classList.remove('on');document.getElementById('timerRing').classList.add('paused');updTimerDisp();}
+updTimerDisp();
+
+// ══════════════════════════
+// ALARMS
+// ══════════════════════════
+let alarmCheckIntvl=setInterval(checkAlarms,30000);
+let alarmActive=null;
+
+function addAlarm(){
+  const time=document.getElementById('alarmTime').value;
+  const label=document.getElementById('alarmLabel').value||'Workout Alarm';
+  const type=document.getElementById('alarmExType').value;
+  const repeat=document.getElementById('alarmRepeat').value;
+  if(!time)return;
+  const list=document.getElementById('alarmList');
+  const noEl=list.querySelector('.no-alarms');
+  if(noEl)noEl.remove();
+  const item=document.createElement('div');
+  item.className='alarm-item';
+  item.setAttribute('data-time',time);
+  item.innerHTML=`
+    <div class="alarm-time">${time}</div>
+    <div class="alarm-info"><div class="alarm-label">${label}</div><div class="alarm-days">${repeat} · ${type}</div></div>
+    <button class="alarm-toggle on" onclick="toggleAlarmToggle(this)"></button>
+    <button class="alarm-del" onclick="delAlarm(this)">🗑</button>`;
+  list.appendChild(item);
+  document.getElementById('alarmLabel').value='';
+  // animate in
+  item.style.opacity='0';item.style.transform='translateX(20px)';
+  setTimeout(()=>{item.style.transition='all .4s ease';item.style.opacity='1';item.style.transform='translateX(0)';},10);
+}
+function toggleAlarmToggle(btn){btn.classList.toggle('on');}
+function delAlarm(btn){
+  const item=btn.closest('.alarm-item');
+  item.style.transition='all .3s';item.style.opacity='0';item.style.transform='translateX(20px)';
+  setTimeout(()=>item.remove(),300);
+}
+function checkAlarms(){
+  const now=new Date();
+  const h=String(now.getHours()).padStart(2,'0');
+  const m=String(now.getMinutes()).padStart(2,'0');
+  const cur=`${h}:${m}`;
+  document.querySelectorAll('.alarm-item').forEach(item=>{
+    if(item.querySelector('.alarm-toggle.on')&&item.getAttribute('data-time')===cur){
+      triggerAlarm(item.querySelector('.alarm-label').textContent);
+    }
+  });
+}
+function triggerAlarm(label){
+  const pop=document.getElementById('alarmPopup');
+  document.getElementById('alarmPopupMsg').textContent=`Time for: ${label}`;
+  pop.classList.add('show');
+  alarmActive=setTimeout(()=>pop.classList.remove('show'),15000);
+}
+function dismissAlarm(){
+  document.getElementById('alarmPopup').classList.remove('show');
+  clearTimeout(alarmActive);
+}
+
+// ══════════════════════════
+// PROGRESS CHART
+// ══════════════════════════
+const heightData=[168.2,168.4,168.6,168.5,168.8,168.9,169.1];
+const chartLabels=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+function buildHeightChart(){
+  const max=Math.max(...heightData);
+  const min=Math.min(...heightData)-0.5;
+  const range=max-min||1;
+  document.getElementById('heightChart').innerHTML=heightData.map((h,i)=>`
+    <div class="hbar-wrap">
+      <div class="hbar-val">${h}</div>
+      <div class="hbar" style="height:${((h-min)/range*140)+10}px"></div>
+      <div class="hbar-label">${chartLabels[i]}</div>
+    </div>`).join('');
+}
+buildHeightChart();
+
+// Streak
+const days=['M','T','W','T','F','S','S'];
+const done=[1,1,1,0,1,1,0];
+document.getElementById('streakRow').innerHTML=days.map((d,i)=>`
+  <div class="streak-day${done[i]?' done':i===4?' today':''}">${d}</div>`).join('');
+
+function logSession(){
+  const h=parseFloat(document.getElementById('heightInput').value);
+  if(h&&h>100){
+    heightData.push(h);heightData.shift();
+    buildHeightChart();
+    document.getElementById('heightInput').value='';
+    // flash success
+    const btn=document.querySelector('.btn-log');
+    btn.textContent='Logged! ✓';btn.style.background='var(--sage)';
+    setTimeout(()=>{btn.textContent='Log Session ✓';btn.style.background='';},2000);
+  }
+}
+
+// ══════════════════════════
+// AI CHAT
+// ══════════════════════════
+const replies={
+  height:["At any age, Dead Hangs + Cobra Stretch daily can add 1–2cm through spinal decompression. Sleep 8+ hours on a firm mattress — 70% of growth hormone releases during deep sleep! 🌙","Focus on: spinal decompression exercises, proper posture, and nutrition rich in calcium & vitamin D. Consistency over 8 weeks makes a measurable difference!"],
+  yoga:["Best yoga for height: Mountain Pose, Downward Dog, and Camel Pose. Daily 20-min practice improves posture significantly in 4–6 weeks. Try pairing with our Forest Morning Calm track for deeper focus 🧘","Start with Beginner poses — Mountain, Tree, Child's Pose. After 2 weeks add Warrior III and Half Moon. The key is slow, controlled movement with deep breathing."],
+  music:["For height stretches, try 'Forest Morning Calm' or 'Bamboo Wind Chimes' — their slow BPM (55–65) sync perfectly with spinal decompression breathing 🎵","For high-energy yoga flows, 'Sunrise Meditation' or 'Yoga Flow Ambient' work great. Nature sounds reduce cortisol by up to 37%, which supports growth hormone production!"],
+  nutrition:["For height: prioritize Calcium (dairy, leafy greens), Vitamin D (sunlight, salmon), Zinc (meat, seeds), and Protein. Warm milk with turmeric before bed supports bone mineralization while you sleep 🥛","Avoid excessive caffeine & processed sugar — they spike cortisol which suppresses growth hormone. Eat within 30 min after exercise for best muscle and bone recovery."],
+  sleep:["Sleep is your secret weapon! 70-80% of growth hormone is released during deep sleep. Tips: Sleep at the same time daily, use a firm mattress, try sleeping on your back, and avoid screens 1hr before bed 😴"],
+  alarm:["I recommend setting alarms for: 7AM Morning Stretch (20 min), 12PM posture break (5 min), and 6PM yoga flow (30 min). Consistency is everything — even small daily sessions compound over months! ⏰"],
+  default:["That's a great question! Combining daily stretching, yoga, quality sleep, and proper nutrition creates the best environment for growth. Even 15–20 minutes daily makes a real difference over time 💪","I'm here to help you reach your full potential — literally! Try asking me about exercises, nutrition, music recommendations, or sleep tips. The more specific you are, the better I can guide you! 🎯"],
+};
+
+function sendChat(){
+  const inp=document.getElementById('chatInput');
+  const msg=inp.value.trim();
+  if(!msg)return;
+  const c=document.getElementById('chatMsgs');
+  c.innerHTML+=`<div class="msg msg-user">${msg}</div>`;
+  inp.value='';
+  const lower=msg.toLowerCase();
+  let arr=replies.default;
+  if(lower.includes('height')||lower.includes('grow')||lower.includes('tall'))arr=replies.height;
+  else if(lower.includes('yoga')||lower.includes('pose'))arr=replies.yoga;
+  else if(lower.includes('music')||lower.includes('sound')||lower.includes('track'))arr=replies.music;
+  else if(lower.includes('food')||lower.includes('eat')||lower.includes('diet')||lower.includes('nutrition'))arr=replies.nutrition;
+  else if(lower.includes('sleep'))arr=replies.sleep;
+  else if(lower.includes('alarm')||lower.includes('remind')||lower.includes('schedule'))arr=replies.alarm;
+  setTimeout(()=>{c.innerHTML+=`<div class="msg msg-ai">${arr[Math.floor(Math.random()*arr.length)]}</div>`;c.scrollTop=c.scrollHeight;},700);
+  c.scrollTop=c.scrollHeight;
+}
+function handleKey(e){if(e.key==='Enter')sendChat();}
+
+// ══════════════════════════
+// TOAST (ChatGPT v4 idea)
+// ══════════════════════════
+let toastTimer=null;
+function showToast(title,msg,dur=3500){
+  const t=document.getElementById('toast');
+  document.getElementById('toastTitle').textContent=title;
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ONBOARDING (ChatGPT v4 idea)
+if(!localStorage.getItem('fr_onboard')){
+  setTimeout(()=>showToast('👋 Welcome to FitRise!','Explore workouts, set alarms & track your growth.'),1200);
+  localStorage.setItem('fr_onboard','1');
+}
+
+// ══════════════════════════
+// PERSISTENT STATE (ChatGPT v4 idea)
+// ══════════════════════════
+const frState=JSON.parse(localStorage.getItem('fr_state')||'{"completedWorkouts":[],"streak":0,"lastDate":null}');
+function saveState(){localStorage.setItem('fr_state',JSON.stringify(frState));}
+
+// ══════════════════════════
+// HOME WORKOUTS DATA
+// ══════════════════════════
+const hwData=[
+  {id:0,cat:'bodyweight',level:'beginner',title:'Morning Power-Up',emoji:'☀️',color:'rgba(212,168,83,.12)',
+   desc:'A gentle full-body wake-up routine to activate your muscles and set a positive tone for the day.',
+   duration:'15 min',exercises:6,calories:90,rest:'30s',
+   moves:[
+     {ico:'🧍',name:'Standing Reach',detail:'Arms overhead, stand on tiptoes',sets:'3 × 30s'},
+     {ico:'🤸',name:'Arm Circles',detail:'Forward and backward rotations',sets:'3 × 20 reps'},
+     {ico:'🦵',name:'Leg Swings',detail:'Front-back, hold wall for balance',sets:'3 × 15 each'},
+     {ico:'🏋️',name:'Hip Circles',detail:'Hands on hips, circle slowly',sets:'3 × 10 each way'},
+     {ico:'🙆',name:'Side Bends',detail:'Reach arm overhead, lean to each side',sets:'3 × 12 each'},
+     {ico:'🚶',name:'March in Place',detail:'High knees, swing arms naturally',sets:'3 × 60s'},
+   ]},
+  {id:1,cat:'hiit',level:'intermediate',title:'Fat Burn HIIT',emoji:'🔥',color:'rgba(224,92,92,.1)',
+   desc:'High-intensity intervals that torch calories, boost metabolism, and build cardiovascular endurance at home.',
+   duration:'25 min',exercises:8,calories:320,rest:'15s',
+   moves:[
+     {ico:'⭐',name:'Jumping Jacks',detail:'Full range, land softly',sets:'4 × 45s'},
+     {ico:'🏃',name:'High Knees',detail:'Drive knees to chest level fast',sets:'4 × 40s'},
+     {ico:'💥',name:'Burpees',detail:'Full range, jump at top',sets:'4 × 30s'},
+     {ico:'🦵',name:'Squat Jumps',detail:'Squat deep, explode upward',sets:'4 × 30s'},
+     {ico:'🤜',name:'Mountain Climbers',detail:'Fast, drive knees to chest',sets:'4 × 40s'},
+     {ico:'🏋️',name:'Jump Lunges',detail:'Alternate legs, land controlled',sets:'4 × 30s'},
+     {ico:'👏',name:'Plyo Push-Ups',detail:'Explosive push, clap at top',sets:'3 × 15'},
+     {ico:'🔄',name:'Skater Hops',detail:'Side to side, touch floor',sets:'4 × 40s'},
+   ]},
+  {id:2,cat:'core',level:'beginner',title:'Core Foundations',emoji:'🎯',color:'rgba(139,175,124,.08)',
+   desc:'Build a strong, stable core with these beginner-friendly exercises. Great for posture and spinal health.',
+   duration:'20 min',exercises:7,calories:130,rest:'30s',
+   moves:[
+     {ico:'🛡️',name:'Dead Bug',detail:'Opposite arm/leg, lower back flat',sets:'3 × 10 each'},
+     {ico:'📐',name:'Plank',detail:'Elbows under shoulders, squeeze glutes',sets:'3 × 45s'},
+     {ico:'🔄',name:'Bird Dog',detail:'Opposite arm/leg extend, hold 2s',sets:'3 × 10 each'},
+     {ico:'🌉',name:'Glute Bridge',detail:'Drive hips up, squeeze at top',sets:'3 × 15'},
+     {ico:'🦵',name:'Leg Raises',detail:'Flat back, lower legs slowly',sets:'3 × 12'},
+     {ico:'↔️',name:'Side Plank',detail:'Stack feet, hold still',sets:'3 × 30s each'},
+     {ico:'🚲',name:'Bicycle Crunches',detail:'Slow and controlled, full rotation',sets:'3 × 20'},
+   ]},
+  {id:3,cat:'yoga',level:'beginner',title:'Morning Yoga Flow',emoji:'🧘',color:'rgba(139,175,124,.1)',
+   desc:'A calming yet energizing sequence designed to stretch the full body, improve posture, and boost mental clarity.',
+   duration:'30 min',exercises:8,calories:110,rest:'60s',
+   moves:[
+     {ico:'🙏',name:'Mountain Pose',detail:'Ground your feet, lengthen spine',sets:'3 × 1 min'},
+     {ico:'⬇️',name:'Downward Dog',detail:'Heels toward floor, head between arms',sets:'3 × 1 min'},
+     {ico:'🤸',name:'Cobra Pose',detail:'Open chest, look gently upward',sets:'3 × 45s'},
+     {ico:'🌳',name:'Warrior I',detail:'Deep lunge, arms overhead',sets:'3 × 45s each'},
+     {ico:'🌙',name:'Child\'s Pose',detail:'Rest and breathe deeply',sets:'3 × 1 min'},
+     {ico:'🌉',name:'Bridge Pose',detail:'Drive hips up, interlace hands',sets:'3 × 45s'},
+     {ico:'💤',name:'Supine Twist',detail:'Knees to one side, breathe deeply',sets:'3 × 1 min each'},
+     {ico:'⭐',name:'Savasana',detail:'Complete stillness, breathe naturally',sets:'5 min'},
+   ]},
+  {id:4,cat:'bodyweight',level:'intermediate',title:'Upper Body Blast',emoji:'💪',color:'rgba(212,168,83,.08)',
+   desc:'Sculpt your upper body with targeted push, pull, and press movements using only your bodyweight.',
+   duration:'30 min',exercises:8,calories:200,rest:'40s',
+   moves:[
+     {ico:'🔽',name:'Push-Ups',detail:'Chest to floor, elbows at 45°',sets:'4 × 15'},
+     {ico:'↗️',name:'Wide Push-Ups',detail:'Hands wide, target chest',sets:'4 × 12'},
+     {ico:'💎',name:'Diamond Push-Ups',detail:'Hands form diamond, target triceps',sets:'3 × 10'},
+     {ico:'🤜',name:'Pike Push-Ups',detail:'Hips high, press down like OHP',sets:'3 × 12'},
+     {ico:'🙌',name:'Shoulder Taps',detail:'From plank, tap each shoulder',sets:'4 × 20'},
+     {ico:'📐',name:'Plank to Downdog',detail:'Flow between positions steadily',sets:'3 × 10'},
+     {ico:'🦵',name:'Superman Hold',detail:'Lift opposite arm/leg, hold 3s',sets:'3 × 12 each'},
+     {ico:'🔄',name:'Around the Worlds',detail:'Arm circle while in plank',sets:'3 × 8 each'},
+   ]},
+  {id:5,cat:'hiit',level:'advanced',title:'HIIT Warrior',emoji:'⚡',color:'rgba(224,92,92,.12)',
+   desc:'An intense, advanced HIIT protocol for maximum calorie burn and athletic conditioning. Not for the faint-hearted.',
+   duration:'40 min',exercises:10,calories:480,rest:'10s',
+   moves:[
+     {ico:'💥',name:'Burpee Box Jump',detail:'Burpee + jump onto surface',sets:'5 × 8'},
+     {ico:'🏃',name:'Sprint in Place',detail:'Max effort, pump arms',sets:'5 × 30s'},
+     {ico:'🦵',name:'Plyometric Lunges',detail:'Explosive, alternate legs mid-air',sets:'4 × 20'},
+     {ico:'👊',name:'Plyo Push-Ups',detail:'Explosive, hands leave floor',sets:'4 × 10'},
+     {ico:'🔄',name:'180° Squat Jumps',detail:'Jump and rotate 180° each rep',sets:'4 × 10'},
+     {ico:'⭐',name:'Star Jumps',detail:'Wide arms and legs at peak',sets:'4 × 45s'},
+     {ico:'🤜',name:'Speed Mountain Climbers',detail:'Maximum speed, tight core',sets:'5 × 30s'},
+     {ico:'🦅',name:'Tuck Jumps',detail:'Pull knees to chest at peak',sets:'4 × 15'},
+     {ico:'💣',name:'Inchworm Burpee',detail:'Walk out + burpee combo',sets:'3 × 8'},
+     {ico:'🔥',name:'Hollow Body Rocks',detail:'Hold hollow, rock forward/back',sets:'3 × 45s'},
+   ]},
+  {id:6,cat:'core',level:'advanced',title:'Six Pack Attack',emoji:'🎯',color:'rgba(139,175,124,.06)',
+   desc:'Advanced core training combining stability, rotation, and anti-rotation exercises for a rock-solid midsection.',
+   duration:'25 min',exercises:8,calories:170,rest:'20s',
+   moves:[
+     {ico:'🌀',name:'Ab Wheel Rollouts',detail:'Control on way out and in',sets:'4 × 8'},
+     {ico:'📐',name:'Long Lever Plank',detail:'Arms fully extended, brace hard',sets:'4 × 45s'},
+     {ico:'🦵',name:'Hanging Knee Raises',detail:'Control the swing, squeeze abs',sets:'4 × 15'},
+     {ico:'🔄',name:'Russian Twists',detail:'Feet elevated, rotate fully',sets:'4 × 24'},
+     {ico:'↔️',name:'Copenhagen Plank',detail:'Top leg on surface, side plank',sets:'3 × 30s each'},
+     {ico:'🌊',name:'Hollow Body Hold',detail:'Lower back pressed flat',sets:'4 × 45s'},
+     {ico:'💥',name:'V-Ups',detail:'Meet hands and feet at top',sets:'4 × 15'},
+     {ico:'🏋️',name:'Dragon Flag',detail:'Controlled descent, full extension',sets:'3 × 6'},
+   ]},
+  {id:7,cat:'yoga',level:'intermediate',title:'Power Yoga Flow',emoji:'🌺',color:'rgba(139,175,124,.08)',
+   desc:'A dynamic Vinyasa-style flow linking breath with movement. Build strength, flexibility, and mindful awareness.',
+   duration:'45 min',exercises:10,calories:200,rest:'45s',
+   moves:[
+     {ico:'☀️',name:'Sun Salutation A',detail:'5 full rounds, breath-led',sets:'5 × complete'},
+     {ico:'🌳',name:'Warrior II',detail:'Open hips, strong back leg',sets:'3 × 1 min each'},
+     {ico:'🔥',name:'Warrior III',detail:'One-leg balance, body parallel',sets:'3 × 45s each'},
+     {ico:'🦅',name:'Eagle Pose',detail:'Wrap arms and legs, sink low',sets:'3 × 1 min each'},
+     {ico:'🌙',name:'Half Moon',detail:'Hand or block on floor, lift leg',sets:'3 × 45s each'},
+     {ico:'🤸',name:'Camel Pose',detail:'Hips forward, hands to heels',sets:'3 × 30s'},
+     {ico:'💤',name:'Pigeon Pose',detail:'Front shin parallel, fold forward',sets:'3 × 2 min each'},
+     {ico:'🌀',name:'Seated Twist',detail:'Tall spine, twist from belly',sets:'3 × 1 min each'},
+     {ico:'⬇️',name:'Yin Forward Fold',detail:'Completely passive, release',sets:'3 min'},
+     {ico:'⭐',name:'Savasana',detail:'Full integration, stillness',sets:'7 min'},
+   ]},
+  {id:8,cat:'bodyweight',level:'advanced',title:'Calisthenics Pro',emoji:'🏆',color:'rgba(212,168,83,.1)',
+   desc:'Elite bodyweight skill training. Work toward handstands, L-sits, and planche progressions.',
+   duration:'50 min',exercises:9,calories:290,rest:'60s',
+   moves:[
+     {ico:'🤸',name:'Handstand Hold',detail:'Wall-supported, work freestanding',sets:'5 × 30s'},
+     {ico:'📐',name:'L-Sit',detail:'On parallettes or dip bars',sets:'5 × 15s'},
+     {ico:'💎',name:'Pseudo Planche',detail:'Lean forward in push-up position',sets:'4 × 30s'},
+     {ico:'🔄',name:'Skin the Cat',detail:'Ring or bar, full rotation',sets:'4 × 5'},
+     {ico:'🦅',name:'Front Lever Tuck',detail:'Hips to bar level, hold',sets:'4 × 20s'},
+     {ico:'💥',name:'Archer Push-Ups',detail:'One arm extended, transfer weight',sets:'4 × 8 each'},
+     {ico:'🌀',name:'Windshield Wipers',detail:'Hanging, rotate legs side to side',sets:'3 × 10'},
+     {ico:'⭐',name:'Typewriter Pull-Up',detail:'Travel side to side at the top',sets:'3 × 6'},
+     {ico:'🏋️',name:'Shrimp Squat',detail:'One leg, touch knee to floor',sets:'3 × 8 each'},
+   ]},
+];
+
+let activeFilter='all';
+let activeWorkout=null;
+
+function filterWorkouts(cat,btn){
+  activeFilter=cat;
+  document.querySelectorAll('.hw-filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWorkouts();
+}
+
+function renderWorkouts(){
+  const filtered=activeFilter==='all'?hwData:hwData.filter(w=>
+    w.cat===activeFilter||w.level===activeFilter
+  );
+  const grid=document.getElementById('hwGrid');
+  if(!filtered.length){grid.innerHTML='<p style="color:var(--muted);padding:20px;">No workouts found for this filter.</p>';return;}
+  grid.innerHTML=filtered.map(w=>`
+    <div class="hw-card" data-id="${w.id}" onclick="openWorkout(${w.id})">
+      <div class="hw-card-thumb" style="background:${w.color}">
+        <div class="hw-emoji">${w.emoji}</div>
+        <div class="hw-badge ${w.level}">${w.level}</div>
+      </div>
+      <div class="hw-card-body">
+        <div class="hw-cat-tag">${w.cat.toUpperCase()} · HOME</div>
+        <h3>${w.title}</h3>
+        <p>${w.desc}</p>
+        <div class="hw-meta">
+          <span>⏱ ${w.duration}</span>
+          <span>🔥 ${w.calories} cal</span>
+          <span>📋 ${w.exercises} moves</span>
+        </div>
+        <button class="hw-start-btn">View Workout →</button>
+      </div>
+    </div>`).join('');
+}
+
+function openWorkout(id){
+  const w=hwData[id];
+  activeWorkout=w;
+  document.getElementById('wmTitle').textContent=w.emoji+' '+w.title;
+  document.getElementById('wmOverview').innerHTML=`
+    <div class="wm-stat"><div class="ws-val">${w.duration}</div><div class="ws-lbl">Duration</div></div>
+    <div class="wm-stat"><div class="ws-val">${w.calories}</div><div class="ws-lbl">Calories</div></div>
+    <div class="wm-stat"><div class="ws-val">${w.exercises}</div><div class="ws-lbl">Exercises</div></div>
+    <div class="wm-stat"><div class="ws-val">${w.rest}</div><div class="ws-lbl">Rest</div></div>`;
+  document.getElementById('wmExercises').innerHTML=w.moves.map((m,i)=>`
+    <div class="wm-ex">
+      <div class="wm-ex-num">${i+1}</div>
+      <div class="wm-ex-ico">${m.ico}</div>
+      <div class="wm-ex-info">
+        <div class="wm-ex-name">${m.name}</div>
+        <div class="wm-ex-detail">${m.detail}</div>
+      </div>
+      <div class="wm-ex-sets">${m.sets}</div>
+    </div>`).join('');
+  document.getElementById('workoutModal').classList.add('open');
+}
+
+function closeWorkoutModal(){
+  document.getElementById('workoutModal').classList.remove('open');
+}
+
+function startWorkoutTimer(){
+  if(!activeWorkout)return;
+  closeWorkoutModal();
+  // Load first exercise into timer
+  const firstMove=activeWorkout.moves[0];
+  document.querySelectorAll('.titem').forEach(e=>e.classList.remove('sel'));
+  showToast('🚀 Workout Started!',`Starting: ${activeWorkout.title}. First up: ${firstMove.name}`);
+  document.getElementById('timerLbl').textContent=firstMove.name;
+  tiLeft=60;resetTimer();
+  document.getElementById('timer-sec').scrollIntoView({behavior:'smooth'});
+  // Log as completed
+  frState.completedWorkouts.push({id:activeWorkout.id,date:Date.now()});
+  saveState();
+}
+
+// Close workout modal on outside click
+document.getElementById('workoutModal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('workoutModal'))closeWorkoutModal();
+});
+
+renderWorkouts();
+
+// Auth MODAL
+
+let isLogin=false;
+function openModal(e){e.preventDefault();document.getElementById('authModal').classList.add('open');}
+function closeModal(){document.getElementById('authModal').classList.remove('open');}
+function toggleAuth(){
+  isLogin=!isLogin;
+  document.getElementById('authTitle').textContent=isLogin?'WELCOME BACK':'JOIN FITRISE';
+  document.getElementById('authSub').textContent=isLogin?'Sign in to continue your journey':'Start your journey to grow taller & stronger';
+  document.getElementById('authName').style.display=isLogin?'none':'block';
+  document.querySelector('.modal-sw').innerHTML=isLogin?'No account? <a onclick="toggleAuth()">Sign up free</a>':'Already have an account? <a onclick="toggleAuth()">Sign in</a>';
+  document.querySelector('.btn-modal').textContent=isLogin?'Sign In':'Get Started Free';
+}
+function doAuth(){
+  const btn=document.querySelector('.btn-modal');
+  btn.textContent='✓ Success!';btn.style.background='var(--sage)';
+  setTimeout(()=>{closeModal();btn.textContent=isLogin?'Sign In':'Get Started Free';btn.style.background='';},1500);
+}
+function socialLogin(provider){
+  const btn=document.querySelector('.btn-modal');
+  document.querySelector(`.${provider.toLowerCase()}-btn`).textContent=`✓ Connecting to ${provider}...`;
+  setTimeout(()=>{closeModal();document.querySelector(`.${provider.toLowerCase()}-btn`).textContent=`Continue with ${provider}`;},1500);
+}
+document.getElementById('authModal').addEventListener('click',e=>{if(e.target===document.getElementById('authModal'))closeModal();});
+</script>
+</body>
+</html>
