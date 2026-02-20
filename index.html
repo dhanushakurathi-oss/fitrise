@@ -2357,11 +2357,14 @@ document.querySelectorAll('.track-item').forEach((item,i)=>{
   });
 });
 </script>
-<!-- FIREBASE AUTH -->
 <script type="module">
 
-// ⭐ Firebase imports
+/* =========================
+   FIREBASE IMPORTS
+========================= */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -2372,7 +2375,19 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// ⭐ YOUR CONFIG (FIXED)
+/* ⭐ ADDED FIRESTORE */
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* =========================
+   CONFIG
+========================= */
+
 const firebaseConfig = {
   apiKey: "AIzaSyBt90ZYvr1Jp4PG9q6dTH1giM6EQv-nsdk",
   authDomain: "fitrise-41bb0.firebaseapp.com",
@@ -2382,16 +2397,35 @@ const firebaseConfig = {
   appId: "1:567411054341:web:422f48f2488ae791fa896c"
 };
 
-// ⭐ Init
+
+/* =========================
+   INIT
+========================= */
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);   // ⭐ NEW
 const googleProvider = new GoogleAuthProvider();
 
 
-// =========================
-// EMAIL SIGNUP
-// =========================
+/* =========================
+   SAVE USER PROFILE ⭐
+========================= */
+
+async function saveProfile(user){
+  await setDoc(doc(db,"users",user.uid),{
+    email:user.email,
+    created:Date.now()
+  },{merge:true});
+}
+
+
+/* =========================
+   EMAIL SIGNUP
+========================= */
+
 window.authNext1 = async function () {
+
   const email = document.getElementById("authEmail").value;
   const pass = document.getElementById("authPass").value;
 
@@ -2401,17 +2435,20 @@ window.authNext1 = async function () {
   }
 
   try {
-    await createUserWithEmailAndPassword(auth, email, pass);
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await saveProfile(cred.user);   // ⭐ SAVE USER
   } catch (e) {
     alert(e.message);
   }
 };
 
 
-// =========================
-// EMAIL LOGIN
-// =========================
+/* =========================
+   EMAIL LOGIN
+========================= */
+
 window.loginEmail = async function () {
+
   const email = document.getElementById("authEmail").value;
   const pass = document.getElementById("authPass").value;
 
@@ -2423,21 +2460,24 @@ window.loginEmail = async function () {
 };
 
 
-// =========================
-// GOOGLE LOGIN
-// =========================
+/* =========================
+   GOOGLE LOGIN
+========================= */
+
 window.socialAuth = async function () {
   try {
-    await signInWithPopup(auth, googleProvider);
+    const cred = await signInWithPopup(auth, googleProvider);
+    await saveProfile(cred.user);   // ⭐ SAVE USER
   } catch (e) {
     alert(e.message);
   }
 };
 
 
-// =========================
-// AUTO LOGIN → DASHBOARD
-// =========================
+/* =========================
+   AUTO LOGIN
+========================= */
+
 onAuthStateChanged(auth, (user) => {
   if (user) {
     document.getElementById("landing").classList.remove("active");
@@ -2446,9 +2486,10 @@ onAuthStateChanged(auth, (user) => {
 });
 
 
-// =========================
-// LOGOUT
-// =========================
+/* =========================
+   LOGOUT
+========================= */
+
 window.logoutUser = async function () {
   await signOut(auth);
   location.reload();
