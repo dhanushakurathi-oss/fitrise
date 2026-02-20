@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1163,6 +1164,426 @@ footer{
   .sidebar{display:none;}
   .wt-layout{flex-direction:column;}
 }
+
+/* ═══════════════════════════════════════
+   SETTINGS & PROFILE — PREMIUM UI
+═══════════════════════════════════════ */
+
+/* Settings overlay panel */
+.settings-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.8);
+  backdrop-filter:blur(18px);z-index:450;
+  display:none;align-items:flex-start;justify-content:flex-end;
+}
+.settings-overlay.open{display:flex;}
+
+.settings-panel{
+  width:min(520px,96vw);height:100vh;
+  background:linear-gradient(180deg,rgba(13,26,16,.98) 0%,rgba(8,14,10,.99) 100%);
+  border-left:1px solid rgba(126,184,138,.18);
+  overflow-y:auto;
+  animation:slideInRight .4s cubic-bezier(.34,1.56,.64,1) both;
+  position:relative;
+}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.settings-panel::-webkit-scrollbar{width:3px;}
+.settings-panel::-webkit-scrollbar-thumb{background:rgba(126,184,138,.2);}
+
+.settings-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px 32px 24px;
+  border-bottom:1px solid rgba(126,184,138,.1);
+  position:sticky;top:0;
+  background:rgba(8,14,10,.97);
+  backdrop-filter:blur(20px);
+  z-index:10;
+}
+.settings-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.7rem;font-weight:600;letter-spacing:.02em;
+}
+.settings-close{
+  width:36px;height:36px;background:rgba(126,184,138,.08);
+  border:1px solid rgba(126,184,138,.18);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:none;font-size:1rem;color:var(--muted);transition:all .3s;
+}
+.settings-close:hover{background:rgba(126,184,138,.15);color:var(--cream);}
+
+/* Settings tabs */
+.settings-tabs{
+  display:flex;gap:0;padding:0 32px;
+  border-bottom:1px solid rgba(126,184,138,.1);
+  overflow-x:auto;
+}
+.settings-tabs::-webkit-scrollbar{display:none;}
+.s-tab{
+  padding:16px 18px;background:transparent;border:none;
+  color:var(--muted);font-family:'Syne',sans-serif;font-size:.72rem;
+  font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  cursor:none;transition:all .3s;border-bottom:2px solid transparent;
+  white-space:nowrap;
+}
+.s-tab.active{color:var(--sage);border-bottom-color:var(--sage);}
+.s-tab:hover:not(.active){color:var(--cream-dim);}
+
+/* Settings content */
+.settings-content{padding:28px 32px 48px;}
+.s-section{margin-bottom:36px;}
+.s-section-title{
+  font-family:'Syne',sans-serif;font-size:.62rem;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.s-section-title::after{content:'';flex:1;height:1px;background:rgba(201,169,110,.15);}
+
+/* Settings rows */
+.s-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0;
+  border-bottom:1px solid rgba(126,184,138,.07);
+  gap:16px;
+}
+.s-row:last-child{border-bottom:none;}
+.s-row-left{flex:1;}
+.s-row-label{font-size:.9rem;font-weight:500;color:var(--cream);margin-bottom:3px;}
+.s-row-desc{font-size:.76rem;color:var(--muted);line-height:1.5;}
+
+/* Toggle switch */
+.s-toggle{
+  width:48px;height:26px;background:rgba(126,184,138,.15);
+  border-radius:13px;position:relative;cursor:none;
+  transition:background .3s;border:none;flex-shrink:0;
+  border:1px solid rgba(126,184,138,.2);
+}
+.s-toggle.on{background:var(--sage);border-color:var(--sage);}
+.s-toggle::after{
+  content:'';position:absolute;width:18px;height:18px;
+  background:#fff;border-radius:50%;top:3px;left:3px;
+  transition:transform .3s;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+.s-toggle.on::after{transform:translateX(22px);}
+
+/* Select in settings */
+.s-select{
+  background:rgba(8,14,10,.8);border:1px solid rgba(126,184,138,.2);
+  color:var(--cream);padding:8px 14px;border-radius:4px;
+  font-family:'DM Sans',sans-serif;font-size:.84rem;
+  cursor:none;outline:none;transition:border-color .3s;
+  min-width:120px;
+}
+.s-select:focus{border-color:var(--sage);}
+
+/* ═══ PROFILE SECTION in Settings ═══ */
+.profile-avatar-zone{
+  display:flex;align-items:center;gap:20px;
+  padding:20px;background:rgba(8,14,10,.5);
+  border:1px solid var(--border);border-radius:12px;
+  margin-bottom:24px;
+}
+.profile-avatar-big{
+  width:72px;height:72px;
+  background:linear-gradient(135deg,rgba(126,184,138,.3),rgba(201,169,110,.2));
+  border:2px solid rgba(126,184,138,.4);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;flex-shrink:0;position:relative;cursor:none;
+  transition:all .3s;
+}
+.profile-avatar-big:hover{border-color:var(--gold);}
+.avatar-edit-badge{
+  position:absolute;bottom:-2px;right:-2px;
+  width:22px;height:22px;
+  background:var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;border:2px solid var(--ink);
+}
+.profile-av-info h4{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:4px;}
+.profile-av-info p{font-size:.78rem;color:var(--muted);}
+.btn-upload-photo{
+  margin-top:10px;padding:7px 16px;background:transparent;
+  border:1px solid rgba(126,184,138,.25);color:var(--sage);
+  border-radius:4px;font-family:'Syne',sans-serif;font-size:.72rem;
+  font-weight:600;letter-spacing:.08em;cursor:none;transition:all .3s;text-transform:uppercase;
+}
+.btn-upload-photo:hover{background:var(--sage-dim);}
+
+/* Inline editable field */
+.s-field{margin-bottom:14px;}
+.s-field label{
+  display:block;font-family:'Syne',sans-serif;font-size:.66rem;
+  color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;
+}
+.s-input{
+  width:100%;background:rgba(8,14,10,.7);
+  border:1px solid rgba(126,184,138,.18);color:var(--cream);
+  padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.88rem;
+  border-radius:4px;outline:none;margin-bottom:0;
+  transition:border-color .3s,background .3s;
+}
+.s-input:focus{border-color:var(--sage);background:rgba(13,26,16,.9);}
+
+.s-row-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+
+/* Danger zone */
+.danger-zone{
+  background:rgba(224,92,92,.05);
+  border:1px solid rgba(224,92,92,.2);
+  border-radius:10px;padding:20px;
+  margin-top:8px;
+}
+.danger-zone h4{font-size:.88rem;color:#e05c5c;font-weight:600;margin-bottom:6px;}
+.danger-zone p{font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+.btn-danger{
+  padding:10px 22px;background:rgba(224,92,92,.1);
+  border:1px solid rgba(224,92,92,.35);color:#e05c5c;
+  border-radius:4px;font-family:'Syne',sans-serif;font-size:.76rem;
+  font-weight:700;letter-spacing:.08em;cursor:none;transition:all .3s;text-transform:uppercase;
+}
+.btn-danger:hover{background:rgba(224,92,92,.18);}
+.btn-danger.logout{
+  background:rgba(126,184,138,.08);border-color:rgba(126,184,138,.25);
+  color:var(--sage);margin-right:10px;
+}
+.btn-danger.logout:hover{background:rgba(126,184,138,.15);}
+
+/* Save button */
+.s-save-bar{
+  position:sticky;bottom:0;
+  background:linear-gradient(180deg,transparent 0%,rgba(8,14,10,.97) 40%);
+  padding:20px 32px 28px;margin:-28px -32px -48px;
+  display:flex;gap:12px;justify-content:flex-end;
+}
+.btn-s-save{
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  color:var(--ink);padding:12px 28px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  border:none;cursor:none;border-radius:4px;transition:all .3s;
+}
+.btn-s-save:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(201,169,110,.3);}
+.btn-s-cancel{
+  background:transparent;color:var(--muted);padding:12px 20px;
+  font-family:'Syne',sans-serif;font-weight:600;font-size:.8rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid rgba(126,184,138,.15);cursor:none;border-radius:4px;transition:all .3s;
+}
+.btn-s-cancel:hover{border-color:rgba(126,184,138,.3);color:var(--cream);}
+
+/* ═══ THEME & COLOR PICKERS ═══ */
+.theme-options{display:flex;gap:10px;margin-top:8px;}
+.theme-opt{
+  flex:1;padding:14px 10px;
+  background:rgba(8,14,10,.6);
+  border:1.5px solid rgba(126,184,138,.15);
+  border-radius:8px;text-align:center;cursor:none;
+  transition:all .3s;
+}
+.theme-opt.sel{border-color:var(--sage);background:rgba(126,184,138,.08);}
+.theme-opt:hover{border-color:rgba(126,184,138,.35);}
+.theme-ico{font-size:1.6rem;margin-bottom:6px;}
+.theme-lbl{font-family:'Syne',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+.theme-opt.sel .theme-lbl{color:var(--sage);}
+
+.unit-toggle{
+  display:flex;gap:0;background:rgba(8,14,10,.7);
+  border:1px solid rgba(126,184,138,.18);border-radius:4px;overflow:hidden;
+}
+.unit-opt{
+  flex:1;padding:9px 16px;background:transparent;border:none;
+  color:var(--muted);font-family:'Syne',sans-serif;font-size:.78rem;
+  font-weight:600;cursor:none;transition:all .3s;text-transform:uppercase;letter-spacing:.06em;
+}
+.unit-opt.sel{background:var(--sage);color:var(--ink);}
+
+/* ═══ NOTIFICATION LEVEL ═══ */
+.notif-level{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;background:rgba(8,14,10,.5);
+  border:1px solid var(--border);border-radius:6px;
+  cursor:none;transition:all .3s;
+}
+.notif-level.sel{border-color:rgba(126,184,138,.3);background:var(--sage-dim);}
+.notif-level:hover{border-color:rgba(126,184,138,.2);}
+.nl-radio{
+  width:18px;height:18px;border-radius:50%;
+  border:2px solid rgba(126,184,138,.3);flex-shrink:0;
+  transition:all .3s;position:relative;
+}
+.notif-level.sel .nl-radio{border-color:var(--sage);}
+.notif-level.sel .nl-radio::after{
+  content:'';position:absolute;width:8px;height:8px;
+  background:var(--sage);border-radius:50%;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.nl-info{flex:1;}
+.nl-label{font-size:.86rem;font-weight:500;color:var(--cream);}
+.nl-desc{font-size:.72rem;color:var(--muted);margin-top:1px;}
+
+/* ═══ PRIVACY SETTINGS ═══ */
+.privacy-card{
+  background:rgba(8,14,10,.5);border:1px solid var(--border);
+  border-radius:8px;padding:16px;margin-bottom:10px;
+}
+.privacy-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.privacy-card-title{font-size:.88rem;font-weight:500;color:var(--cream);}
+.privacy-card-desc{font-size:.76rem;color:var(--muted);line-height:1.5;}
+
+/* ═══ ACCOUNT VERIFICATION BADGES ═══ */
+.verify-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 0;border-bottom:1px solid rgba(126,184,138,.07);
+}
+.verify-ico{font-size:1.2rem;width:28px;text-align:center;}
+.verify-info{flex:1;}
+.verify-label{font-size:.88rem;font-weight:500;color:var(--cream);}
+.verify-sub{font-size:.74rem;color:var(--muted);}
+.verify-badge{
+  font-family:'Syne',sans-serif;font-size:.64rem;font-weight:700;
+  padding:4px 10px;border-radius:20px;letter-spacing:.04em;
+}
+.verified{background:rgba(126,184,138,.12);border:1px solid rgba(126,184,138,.3);color:var(--sage);}
+.unverified{background:rgba(201,169,110,.08);border:1px solid rgba(201,169,110,.25);color:var(--gold);}
+.btn-verify{
+  padding:7px 14px;background:transparent;
+  border:1px solid rgba(201,169,110,.3);color:var(--gold);
+  border-radius:4px;font-family:'Syne',sans-serif;font-size:.68rem;
+  font-weight:700;letter-spacing:.06em;cursor:none;transition:all .3s;text-transform:uppercase;
+}
+.btn-verify:hover{background:rgba(201,169,110,.1);}
+
+/* ═══ PROFILE VIEW (full page inside dashboard) ═══ */
+.profile-page{
+  background:var(--ink);min-height:100vh;
+  display:none;
+}
+.profile-page.active{display:block;}
+
+/* ═══ PREMIUM BADGES on sidebar ═══ */
+.premium-badge{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;
+  background:linear-gradient(135deg,rgba(201,169,110,.1),rgba(201,169,110,.05));
+  border:1px solid rgba(201,169,110,.25);
+  border-radius:10px;margin-top:8px;cursor:none;transition:all .3s;
+}
+.premium-badge:hover{border-color:rgba(201,169,110,.4);}
+.pb-ico{font-size:1.2rem;}
+.pb-text{flex:1;}
+.pb-label{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;}
+.pb-sub{font-size:.66rem;color:var(--muted);margin-top:1px;}
+.pb-arrow{color:var(--gold);opacity:.6;font-size:.8rem;}
+
+/* ═══ QUICK ACTION BUTTONS in sidebar ═══ */
+.sidebar-actions{display:flex;gap:8px;padding:4px 0;}
+.sidebar-action{
+  flex:1;padding:9px 6px;background:rgba(8,14,10,.5);
+  border:1px solid var(--border);border-radius:6px;
+  font-size:.72rem;color:var(--muted);cursor:none;
+  transition:all .3s;text-align:center;
+}
+.sidebar-action:hover{border-color:var(--sage);color:var(--sage);}
+
+/* ═══ DASHBOARD HEADER IMPROVEMENTS ═══ */
+.greeting-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:5px 14px;background:rgba(126,184,138,.08);
+  border:1px solid rgba(126,184,138,.2);border-radius:20px;
+  font-family:'Syne',sans-serif;font-size:.66rem;font-weight:600;
+  color:var(--sage);letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+/* ═══ ENHANCED METRIC CARDS ═══ */
+.metric-icon-bg{
+  width:44px;height:44px;
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;margin-bottom:12px;
+}
+.mic-green{background:rgba(126,184,138,.1);border:1px solid rgba(126,184,138,.2);}
+.mic-gold{background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.2);}
+.mic-blue{background:rgba(100,150,220,.1);border:1px solid rgba(100,150,220,.2);}
+.mic-purple{background:rgba(180,130,200,.1);border:1px solid rgba(180,130,200,.2);}
+
+/* ═══ ACTIVITY SUMMARY STRIP ═══ */
+.activity-strip{
+  display:flex;gap:12px;padding:16px;
+  background:rgba(8,14,10,.5);border:1px solid var(--border);
+  border-radius:10px;overflow-x:auto;
+}
+.activity-strip::-webkit-scrollbar{display:none;}
+.act-day{
+  flex-shrink:0;text-align:center;padding:10px 14px;
+  border-radius:8px;transition:all .3s;cursor:none;
+}
+.act-day.today{background:rgba(126,184,138,.1);border:1px solid rgba(126,184,138,.2);}
+.act-day.done .act-dot{background:var(--sage);}
+.act-day .act-lbl{font-family:'Syne',sans-serif;font-size:.62rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.act-dot{width:10px;height:10px;border-radius:50%;background:rgba(126,184,138,.2);margin:0 auto 5px;}
+.act-day.today .act-lbl{color:var(--sage);}
+.act-cal{font-family:'Cormorant Garamond',serif;font-size:.88rem;color:var(--cream);}
+
+/* ═══ MODAL BACKDROP CLICK AREA ═══ */
+.settings-overlay .settings-backdrop{
+  position:absolute;inset:0;z-index:-1;
+}
+
+/* ═══ DATA EXPORT / ACCOUNT ACTIONS ═══ */
+.action-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 0;border-bottom:1px solid rgba(126,184,138,.07);gap:16px;
+}
+.action-row:last-child{border-bottom:none;}
+.action-label{font-size:.88rem;color:var(--cream);}
+.action-desc{font-size:.74rem;color:var(--muted);margin-top:2px;}
+.btn-action{
+  padding:8px 16px;background:rgba(126,184,138,.07);
+  border:1px solid rgba(126,184,138,.2);color:var(--sage);
+  border-radius:4px;font-family:'Syne',sans-serif;font-size:.72rem;
+  font-weight:600;letter-spacing:.06em;cursor:none;transition:all .3s;text-transform:uppercase;
+  white-space:nowrap;
+}
+.btn-action:hover{background:rgba(126,184,138,.14);}
+
+/* ═══ PROGRESS PAGE ENHANCEMENTS ═══ */
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.chart-period-tabs{display:flex;gap:4px;background:rgba(8,14,10,.6);padding:3px;border-radius:4px;}
+.cpt{
+  padding:6px 14px;background:transparent;border:none;
+  color:var(--muted);font-family:'Syne',sans-serif;font-size:.7rem;
+  font-weight:600;cursor:none;border-radius:3px;transition:all .3s;letter-spacing:.06em;
+}
+.cpt.active{background:var(--sage);color:var(--ink);}
+
+/* ═══ NOTIFICATION BELL BADGE ═══ */
+.notif-count{
+  position:absolute;top:-2px;right:-2px;
+  width:16px;height:16px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  border-radius:50%;border:2px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:.5rem;font-weight:700;color:var(--ink);
+}
+
+/* ═══ LEVEL / XP SYSTEM ═══ */
+.level-bar-wrap{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;background:rgba(8,14,10,.5);
+  border:1px solid var(--border);border-radius:8px;margin-bottom:16px;
+}
+.level-badge{
+  width:40px;height:40px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--ink);
+  flex-shrink:0;
+}
+.level-info{flex:1;}
+.level-label{font-family:'Syne',sans-serif;font-size:.68rem;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+.level-xp-bar{height:5px;background:rgba(201,169,110,.15);border-radius:3px;overflow:hidden;}
+.level-xp-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;width:68%;}
+.level-xp-text{font-size:.66rem;color:var(--muted);margin-top:4px;}
 </style>
 </head>
 <body>
@@ -1354,6 +1775,473 @@ footer{
     </div>
   </div>
 </div>
+
+<!-- ═══════════════════════════════
+   SETTINGS PANEL
+═══════════════════════════════ -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-backdrop" onclick="closeSettings()"></div>
+  <div class="settings-panel">
+    <div class="settings-header">
+      <div class="settings-title">Settings</div>
+      <button class="settings-close" onclick="closeSettings()">✕</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="settings-tabs">
+      <button class="s-tab active" onclick="switchSettingsTab('profile',this)">Profile</button>
+      <button class="s-tab" onclick="switchSettingsTab('general',this)">General</button>
+      <button class="s-tab" onclick="switchSettingsTab('notifications',this)">Alerts</button>
+      <button class="s-tab" onclick="switchSettingsTab('privacy',this)">Privacy</button>
+      <button class="s-tab" onclick="switchSettingsTab('account',this)">Account</button>
+    </div>
+
+    <div class="settings-content">
+
+      <!-- ── PROFILE TAB ── -->
+      <div class="s-tab-content" id="tab-profile">
+        <!-- Avatar + name zone -->
+        <div class="profile-avatar-zone">
+          <div class="profile-avatar-big" onclick="showToast('📸 Photo Upload','Photo upload requires Firebase Storage integration.')">
+            🧘
+            <div class="avatar-edit-badge">✏️</div>
+          </div>
+          <div class="profile-av-info">
+            <h4 id="profileDisplayName">Your Name</h4>
+            <p id="profileDisplayGoal">🏃 Grow Taller</p>
+            <button class="btn-upload-photo" onclick="showToast('📸 Upload Photo','Connect Firebase Storage to enable photo uploads.')">Upload Photo</button>
+          </div>
+        </div>
+
+        <!-- XP Level bar -->
+        <div class="level-bar-wrap">
+          <div class="level-badge">12</div>
+          <div class="level-info">
+            <div class="level-label">Level 12 · Wellness Warrior</div>
+            <div class="level-xp-bar"><div class="level-xp-fill"></div></div>
+            <div class="level-xp-text">2,840 / 4,200 XP · 1,360 XP to next level</div>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Personal Information</div>
+          <div class="s-row-2col">
+            <div class="s-field">
+              <label>First Name</label>
+              <input class="s-input" type="text" id="editFirstName" placeholder="First name">
+            </div>
+            <div class="s-field">
+              <label>Last Name</label>
+              <input class="s-input" type="text" id="editLastName" placeholder="Last name">
+            </div>
+          </div>
+          <div class="s-field">
+            <label>Date of Birth</label>
+            <input class="s-input" type="date" id="editDOB" value="2000-06-15">
+          </div>
+          <div class="s-field">
+            <label>Gender</label>
+            <select class="s-select" style="width:100%;margin-top:0">
+              <option>Male</option>
+              <option>Female</option>
+              <option>Non-binary</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Fitness Details</div>
+          <div class="s-row-2col">
+            <div class="s-field">
+              <label>Current Height</label>
+              <input class="s-input" type="number" id="editHeight" placeholder="165" value="165">
+            </div>
+            <div class="s-field">
+              <label>Current Weight</label>
+              <input class="s-input" type="number" id="editWeight" placeholder="60" value="60">
+            </div>
+          </div>
+          <div class="s-field">
+            <label>Primary Goal</label>
+            <select class="s-select" style="width:100%">
+              <option>🏃 Grow Taller</option>
+              <option>💪 Build Strength</option>
+              <option>🧘 Improve Flexibility</option>
+              <option>⚖️ Lose Weight</option>
+              <option>🌿 Overall Wellness</option>
+            </select>
+          </div>
+          <div class="s-field">
+            <label>Activity Level</label>
+            <select class="s-select" style="width:100%">
+              <option>Sedentary (desk job)</option>
+              <option>Lightly Active (1-3 days/week)</option>
+              <option selected>Moderately Active (3-5 days/week)</option>
+              <option>Very Active (6-7 days/week)</option>
+              <option>Athlete (2x per day)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="s-save-bar">
+          <button class="btn-s-cancel" onclick="closeSettings()">Cancel</button>
+          <button class="btn-s-save" onclick="saveProfile()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- ── GENERAL TAB ── -->
+      <div class="s-tab-content" id="tab-general" style="display:none">
+        <div class="s-section">
+          <div class="s-section-title">Appearance</div>
+          <div class="s-row-label" style="margin-bottom:12px;font-size:.9rem;font-weight:500;color:var(--cream)">Theme</div>
+          <div class="theme-options">
+            <div class="theme-opt sel" onclick="selectTheme(this,'dark')">
+              <div class="theme-ico">🌑</div>
+              <div class="theme-lbl">Dark</div>
+            </div>
+            <div class="theme-opt" onclick="selectTheme(this,'light')">
+              <div class="theme-ico">☀️</div>
+              <div class="theme-lbl">Light</div>
+            </div>
+            <div class="theme-opt" onclick="selectTheme(this,'forest')">
+              <div class="theme-ico">🌿</div>
+              <div class="theme-lbl">Forest</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Units & Language</div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Measurement Units</div>
+              <div class="s-row-desc">Choose how height and weight are displayed</div>
+            </div>
+            <div class="unit-toggle">
+              <button class="unit-opt sel" onclick="selUnit(this,'cm')">cm / kg</button>
+              <button class="unit-opt" onclick="selUnit(this,'ft')">ft / lbs</button>
+            </div>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Language</div>
+              <div class="s-row-desc">App display language</div>
+            </div>
+            <select class="s-select">
+              <option>English</option>
+              <option>Hindi</option>
+              <option>Spanish</option>
+              <option>French</option>
+              <option>German</option>
+              <option>Arabic</option>
+            </select>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Start Week On</div>
+            </div>
+            <select class="s-select">
+              <option>Monday</option>
+              <option>Sunday</option>
+              <option>Saturday</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Workout Preferences</div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Sound Effects</div>
+              <div class="s-row-desc">Play audio cues during workouts</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Auto-advance Exercises</div>
+              <div class="s-row-desc">Automatically move to next exercise after rest</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Haptic Feedback</div>
+              <div class="s-row-desc">Vibrate on timers and completions</div>
+            </div>
+            <button class="s-toggle" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Rest Timer Default</div>
+            </div>
+            <select class="s-select">
+              <option>30 seconds</option>
+              <option selected>60 seconds</option>
+              <option>90 seconds</option>
+              <option>2 minutes</option>
+              <option>3 minutes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NOTIFICATIONS TAB ── -->
+      <div class="s-tab-content" id="tab-notifications" style="display:none">
+        <div class="s-section">
+          <div class="s-section-title">Notification Frequency</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:4px;">
+            <div class="notif-level sel" onclick="selNotifLevel(this)">
+              <div class="nl-radio"></div>
+              <div class="nl-info">
+                <div class="nl-label">All Notifications</div>
+                <div class="nl-desc">Workouts, achievements, nutrition, streaks, tips</div>
+              </div>
+            </div>
+            <div class="notif-level" onclick="selNotifLevel(this)">
+              <div class="nl-radio"></div>
+              <div class="nl-info">
+                <div class="nl-label">Essential Only</div>
+                <div class="nl-desc">Workout alarms and streak reminders only</div>
+              </div>
+            </div>
+            <div class="notif-level" onclick="selNotifLevel(this)">
+              <div class="nl-radio"></div>
+              <div class="nl-info">
+                <div class="nl-label">Silent Mode</div>
+                <div class="nl-desc">No notifications — check the app manually</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Workout Reminders</div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Morning Workout</div>
+              <div class="s-row-desc">Daily at 7:00 AM</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Evening Session</div>
+              <div class="s-row-desc">Weekdays at 6:30 PM</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Sleep Preparation</div>
+              <div class="s-row-desc">Daily at 10:00 PM</div>
+            </div>
+            <button class="s-toggle" onclick="this.classList.toggle('on')"></button>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Achievement Alerts</div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Badge Earned</div>
+              <div class="s-row-desc">When you unlock a new achievement</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Streak Milestones</div>
+              <div class="s-row-desc">7, 14, 30, 60, 90 day streaks</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Height Milestones</div>
+              <div class="s-row-desc">When you hit +0.5, +1, +2 cm</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Weekly Summary</div>
+              <div class="s-row-desc">Every Sunday with your week in review</div>
+            </div>
+            <button class="s-toggle" onclick="this.classList.toggle('on')"></button>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Nutrition & Hydration</div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Meal Reminders</div>
+              <div class="s-row-desc">Log breakfast, lunch, dinner</div>
+            </div>
+            <button class="s-toggle" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Water Reminders</div>
+              <div class="s-row-desc">Every 2 hours during the day</div>
+            </div>
+            <button class="s-toggle" onclick="this.classList.toggle('on')"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PRIVACY TAB ── -->
+      <div class="s-tab-content" id="tab-privacy" style="display:none">
+        <div class="s-section">
+          <div class="s-section-title">Profile Visibility</div>
+          <div class="privacy-card">
+            <div class="privacy-card-header">
+              <div class="privacy-card-title">Public Profile</div>
+              <button class="s-toggle" onclick="this.classList.toggle('on')"></button>
+            </div>
+            <div class="privacy-card-desc">Let other FitRise members find your profile. Your achievements and streak will be visible.</div>
+          </div>
+          <div class="privacy-card">
+            <div class="privacy-card-header">
+              <div class="privacy-card-title">Show Height Progress</div>
+              <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+            </div>
+            <div class="privacy-card-desc">Display your height journey data on your public profile.</div>
+          </div>
+          <div class="privacy-card">
+            <div class="privacy-card-header">
+              <div class="privacy-card-title">Show Streak Count</div>
+              <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+            </div>
+            <div class="privacy-card-desc">Show your current streak on leaderboards and community.</div>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Data & Analytics</div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Usage Analytics</div>
+              <div class="s-row-desc">Help improve FitRise by sharing anonymous usage data</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Crash Reports</div>
+              <div class="s-row-desc">Automatically send crash logs to our team</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+          <div class="s-row">
+            <div class="s-row-left">
+              <div class="s-row-label">Personalization Data</div>
+              <div class="s-row-desc">Use your activity to improve AI recommendations</div>
+            </div>
+            <button class="s-toggle on" onclick="this.classList.toggle('on')"></button>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Your Data</div>
+          <div class="action-row">
+            <div>
+              <div class="action-label">Download My Data</div>
+              <div class="action-desc">Get a copy of all your FitRise data as a JSON file</div>
+            </div>
+            <button class="btn-action" onclick="showToast('📦 Export Ready','Your data export will be emailed within 24 hours.')">Export</button>
+          </div>
+          <div class="action-row">
+            <div>
+              <div class="action-label">Clear Workout History</div>
+              <div class="action-desc">Delete all logged sessions (cannot be undone)</div>
+            </div>
+            <button class="btn-action" onclick="showToast('⚠️ Confirm Required','This action requires email confirmation.')">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ACCOUNT TAB ── -->
+      <div class="s-tab-content" id="tab-account" style="display:none">
+        <div class="s-section">
+          <div class="s-section-title">Verification Status</div>
+          <div class="verify-row">
+            <div class="verify-ico">📧</div>
+            <div class="verify-info">
+              <div class="verify-label">Email Address</div>
+              <div class="verify-sub" id="accountEmail">user@example.com</div>
+            </div>
+            <span class="verify-badge verified">✓ Verified</span>
+          </div>
+          <div class="verify-row">
+            <div class="verify-ico">📱</div>
+            <div class="verify-info">
+              <div class="verify-label">Phone Number</div>
+              <div class="verify-sub">Not added</div>
+            </div>
+            <button class="btn-verify" onclick="showToast('📱 Add Phone','Phone verification will be available soon.')">Add Phone</button>
+          </div>
+          <div class="verify-row">
+            <div class="verify-ico">🔑</div>
+            <div class="verify-info">
+              <div class="verify-label">Google Account</div>
+              <div class="verify-sub">Connected</div>
+            </div>
+            <span class="verify-badge verified">✓ Linked</span>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Security</div>
+          <div class="action-row">
+            <div>
+              <div class="action-label">Change Password</div>
+              <div class="action-desc">Update your login password</div>
+            </div>
+            <button class="btn-action" onclick="showToast('🔑 Password Reset','A reset link has been sent to your email.')">Update</button>
+          </div>
+          <div class="action-row">
+            <div>
+              <div class="action-label">Two-Factor Authentication</div>
+              <div class="action-desc">Add an extra layer of security to your account</div>
+            </div>
+            <button class="btn-action" onclick="showToast('🔐 2FA','Two-factor authentication setup coming soon.')">Enable</button>
+          </div>
+          <div class="action-row">
+            <div>
+              <div class="action-label">Active Sessions</div>
+              <div class="action-desc">Manage all devices logged into your account</div>
+            </div>
+            <button class="btn-action" onclick="showToast('📱 Sessions','1 active session: This browser')">View</button>
+          </div>
+        </div>
+
+        <div class="s-section">
+          <div class="s-section-title">Subscription</div>
+          <div class="action-row">
+            <div>
+              <div class="action-label" style="color:var(--gold)">🌟 FitRise Free Plan</div>
+              <div class="action-desc">Upgrade to Pro for advanced AI, unlimited tracking, and premium content</div>
+            </div>
+            <button class="btn-action" style="color:var(--gold);border-color:rgba(201,169,110,.3);background:rgba(201,169,110,.08)" onclick="showToast('⭐ Upgrade to Pro','Premium plans launching soon. Stay tuned!')">Upgrade</button>
+          </div>
+        </div>
+
+        <div class="s-section" style="margin-top:24px;">
+          <div class="danger-zone">
+            <h4>⚠️ Danger Zone</h4>
+            <p>These actions are permanent and cannot be undone. Please proceed with caution.</p>
+            <button class="btn-danger logout" onclick="doLogout()">Sign Out</button>
+            <button class="btn-danger" onclick="confirmDeleteAccount()">Delete Account</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /settings-content -->
+  </div><!-- /settings-panel -->
+</div><!-- /settings-overlay -->
 
 <!-- ═══════════════════════════════
    LANDING PAGE
@@ -1624,11 +2512,11 @@ footer{
   <div class="logo">Fit<span>Rise</span></div>
   <div class="dash-nav-right">
     <div class="dash-notif" onclick="showToast('🔔 Notifications','You have 3 new achievements!')">
-      🔔<div class="notif-dot"></div>
+      🔔<div class="notif-count">3</div>
     </div>
     <div style="font-size:.82rem;color:var(--muted);font-family:'Syne',sans-serif;letter-spacing:.06em;" id="dashGreetNav">Hello!</div>
-    <div class="dash-avatar">🧘</div>
-    <button class="btn-ghost" style="padding:8px 18px;font-size:.76rem;cursor:none;" onclick="backToLanding()">← Landing</button>
+    <div class="dash-avatar" onclick="openSettings()" title="Settings">🧘</div>
+    <button class="btn-ghost" style="padding:8px 18px;font-size:.76rem;cursor:none;" onclick="backToLanding()">← Home</button>
   </div>
 </nav>
 
@@ -1638,17 +2526,38 @@ footer{
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-section">Main</div>
-    <div class="sidebar-item active"><span class="si-icon">🏠</span>Dashboard</div>
-    <div class="sidebar-item"><span class="si-icon">🏋️</span>Exercises<span class="si-badge">120</span></div>
-    <div class="sidebar-item"><span class="si-icon">🧘</span>Yoga Flows<span class="si-badge">48</span></div>
-    <div class="sidebar-item"><span class="si-icon">🥗</span>Nutrition</div>
-    <div class="sidebar-item"><span class="si-icon">🤖</span>AI Coach</div>
+    <div class="sidebar-item active" onclick="sidebarNav(this,'dashboard')"><span class="si-icon">🏠</span>Dashboard</div>
+    <div class="sidebar-item" onclick="sidebarNav(this,'exercises')"><span class="si-icon">🏋️</span>Exercises<span class="si-badge">120</span></div>
+    <div class="sidebar-item" onclick="sidebarNav(this,'yoga')"><span class="si-icon">🧘</span>Yoga Flows<span class="si-badge">48</span></div>
+    <div class="sidebar-item" onclick="sidebarNav(this,'nutrition')"><span class="si-icon">🥗</span>Nutrition</div>
+    <div class="sidebar-item" onclick="sidebarNav(this,'ai')"><span class="si-icon">🤖</span>AI Coach</div>
     <div class="sidebar-section" style="margin-top:8px;">Tools</div>
-    <div class="sidebar-item"><span class="si-icon">⏱</span>Timer</div>
-    <div class="sidebar-item"><span class="si-icon">⏰</span>Alarms</div>
-    <div class="sidebar-item"><span class="si-icon">📊</span>Progress</div>
-    <div class="sidebar-item"><span class="si-icon">🏆</span>Achievements</div>
-    <div class="sidebar-item"><span class="si-icon">🎵</span>Music</div>
+    <div class="sidebar-item" onclick="sidebarNav(this,'timer')"><span class="si-icon">⏱</span>Timer</div>
+    <div class="sidebar-item" onclick="sidebarNav(this,'alarms')"><span class="si-icon">⏰</span>Alarms</div>
+    <div class="sidebar-item" onclick="sidebarNav(this,'progress')"><span class="si-icon">📊</span>Progress</div>
+    <div class="sidebar-item" onclick="sidebarNav(this,'achievements')"><span class="si-icon">🏆</span>Achievements</div>
+    <div class="sidebar-item" onclick="sidebarNav(this,'music')"><span class="si-icon">🎵</span>Music</div>
+    <div class="sidebar-section" style="margin-top:8px;">Account</div>
+    <div class="sidebar-item" onclick="openSettings()"><span class="si-icon">⚙️</span>Settings</div>
+    <div class="sidebar-item" onclick="openSettings();setTimeout(()=>switchSettingsTab('profile',document.querySelector('.s-tab')),300)"><span class="si-icon">👤</span>Profile</div>
+
+    <!-- Quick actions -->
+    <div class="sidebar-section" style="margin-top:8px;">Quick</div>
+    <div class="sidebar-actions">
+      <div class="sidebar-action" onclick="showToast('📸 Log Session','Session logged successfully!')">📸 Log</div>
+      <div class="sidebar-action" onclick="openWorkoutModal()">🚀 Start</div>
+      <div class="sidebar-action" onclick="fpToggle()">🎵 Play</div>
+    </div>
+
+    <!-- Premium badge -->
+    <div class="premium-badge" onclick="showToast('⭐ FitRise Pro','Unlock advanced AI, unlimited logs, and premium content. Launching soon!')">
+      <div class="pb-ico">⭐</div>
+      <div class="pb-text">
+        <div class="pb-label">Upgrade to Pro</div>
+        <div class="pb-sub">Unlock all features</div>
+      </div>
+      <div class="pb-arrow">›</div>
+    </div>
 
     <!-- Streak Widget -->
     <div class="streak-widget">
@@ -1672,13 +2581,28 @@ footer{
     <!-- GREETING -->
     <div class="greeting-bar">
       <div class="greeting-text">
+        <div class="greeting-pill">🌿 Day 14 Streak · Keep Going!</div>
         <h1>Welcome back, <strong id="dashName">there</strong></h1>
-        <p>You're on a 14-day streak. Keep going! 🔥</p>
+        <p>You're crushing it. Friday is your strongest day historically. 💪</p>
       </div>
       <div class="today-date">
         <strong id="dashDate">Friday</strong>
         <span id="dashDateFull">February 20, 2026</span>
+        <div style="margin-top:8px;">
+          <button class="btn-action" style="font-size:.68rem;padding:6px 12px;" onclick="openSettings()">⚙️ Settings</button>
+        </div>
       </div>
+    </div>
+
+    <!-- ACTIVITY STRIP -->
+    <div class="activity-strip">
+      <div class="act-day done"><div class="act-lbl">Mon</div><div class="act-dot"></div><div class="act-cal">182 cal</div></div>
+      <div class="act-day done"><div class="act-lbl">Tue</div><div class="act-dot"></div><div class="act-cal">210 cal</div></div>
+      <div class="act-day done"><div class="act-lbl">Wed</div><div class="act-dot"></div><div class="act-cal">165 cal</div></div>
+      <div class="act-day done"><div class="act-lbl">Thu</div><div class="act-dot"></div><div class="act-cal">240 cal</div></div>
+      <div class="act-day today"><div class="act-lbl">Fri ·now</div><div class="act-dot"></div><div class="act-cal">-- cal</div></div>
+      <div class="act-day"><div class="act-lbl">Sat</div><div class="act-dot"></div><div class="act-cal">--</div></div>
+      <div class="act-day"><div class="act-lbl">Sun</div><div class="act-dot"></div><div class="act-cal">--</div></div>
     </div>
 
     <!-- TODAY WORKOUT + METRICS -->
@@ -2333,12 +3257,99 @@ function toggleFP(){
   document.getElementById('floatPlayer').classList.toggle('mini');
 }
 
-// ═══════════════ SIDEBAR ITEMS (cosmetic) ═══════════════
+// ═══════════════ SIDEBAR ITEMS ═══════════════
+function sidebarNav(item, section){
+  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+  item.classList.add('active');
+  const toasts={
+    dashboard:'🏠 Dashboard','exercises':'🏋️ Exercise Library loaded',
+    yoga:'🧘 Yoga Library loaded',nutrition:'🥗 Nutrition Planner loaded',
+    ai:'🤖 AI Coach ready',timer:'⏱ Timer activated',
+    alarms:'⏰ Alarm Manager loaded',progress:'📊 Progress Analytics loaded',
+    achievements:'🏆 Achievements unlocked',music:'🎵 Music Library loaded'
+  };
+  if(toasts[section]) showToast(toasts[section],'');
+}
 document.querySelectorAll('.sidebar-item').forEach(item=>{
   item.addEventListener('click',()=>{
-    document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
-    item.classList.add('active');
+    // handled by onclick
   });
+});
+
+// ═══════════════ SETTINGS PANEL ═══════════════
+function openSettings(){
+  document.getElementById('settingsOverlay').classList.add('open');
+  // Populate profile fields with current user data
+  const name = document.getElementById('dashName').textContent;
+  document.getElementById('profileDisplayName').textContent = name || 'Your Name';
+  document.getElementById('editFirstName').value = name || '';
+}
+
+function closeSettings(){
+  document.getElementById('settingsOverlay').classList.remove('open');
+}
+
+function switchSettingsTab(tab, btn){
+  // Hide all tab content
+  document.querySelectorAll('.s-tab-content').forEach(c=>c.style.display='none');
+  document.querySelectorAll('.s-tab').forEach(b=>b.classList.remove('active'));
+  // Show selected
+  document.getElementById('tab-'+tab).style.display='block';
+  if(btn) btn.classList.add('active');
+}
+
+function saveProfile(){
+  const first = document.getElementById('editFirstName').value.trim();
+  const last = document.getElementById('editLastName').value.trim();
+  const height = document.getElementById('editHeight').value;
+  const name = (first + ' ' + last).trim() || 'Friend';
+  // Update dashboard
+  if(document.getElementById('dashName')) document.getElementById('dashName').textContent = first||name;
+  if(document.getElementById('dashGreetNav')) document.getElementById('dashGreetNav').textContent = 'Hello, '+(first||name)+'!';
+  document.getElementById('profileDisplayName').textContent = name;
+  closeSettings();
+  showToast('✅ Profile Saved','Your changes have been saved successfully!');
+}
+
+function selectTheme(el, theme){
+  document.querySelectorAll('.theme-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  if(theme==='light'){
+    showToast('☀️ Light Theme','Light theme preview — full implementation requires CSS toggle.');
+  } else if(theme==='forest'){
+    showToast('🌿 Forest Theme','Forest theme selected!');
+  } else {
+    showToast('🌑 Dark Theme','Dark theme active.');
+  }
+}
+
+function selUnit(btn, unit){
+  btn.closest('.unit-toggle').querySelectorAll('.unit-opt').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  showToast('📏 Units Changed', unit==='cm' ? 'Switched to cm / kg' : 'Switched to ft / lbs');
+}
+
+function selNotifLevel(el){
+  document.querySelectorAll('.notif-level').forEach(n=>n.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function doLogout(){
+  closeSettings();
+  showToast('👋 Signed Out','You have been logged out successfully.');
+  setTimeout(()=>{ backToLanding(); }, 1200);
+}
+
+function confirmDeleteAccount(){
+  if(confirm('⚠️ Delete your FitRise account?\n\nThis will permanently erase all your data, progress, and achievements. This cannot be undone.')){
+    showToast('🗑️ Account Deleted','All data removed. Redirecting...');
+    setTimeout(()=>backToLanding(), 1800);
+  }
+}
+
+// Close settings on backdrop click
+document.getElementById('settingsOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('settingsOverlay')) closeSettings();
 });
 
 // ═══════════════ EX CAT BUTTONS ═══════════════
@@ -2376,7 +3387,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBt90ZYvr1Jp4PG9q6dTH1giM6EQv-nsdk",
   authDomain: "fitrise-41bb0.firebaseapp.com",
   projectId: "fitrise-41bb0",
-  storageBucket: "fitrise-41bb0.firebasestorage.app",
+  storageBucket: "fitrise-41bb0.appspot.com",
   messagingSenderId: "567411054341",
   appId: "1:567411054341:web:422f48f2488ae791fa896c"
 };
