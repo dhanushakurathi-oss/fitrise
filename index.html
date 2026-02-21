@@ -3475,12 +3475,32 @@ window.socialAuth = async function () {
 onAuthStateChanged(auth, (user) => {
   if (user) {
 
-    document.getElementById("landing").classList.remove("active");
-    document.getElementById("dashboard").classList.add("active");
+    // 🔥 Close signup modal if open
+    const modal = document.getElementById("authModal");
+    if (modal) modal.classList.remove("open");
+
+    // 🔥 Switch views properly
+    if (window.showView) {
+      showView("dashboard");
+    } else {
+      document.getElementById("landing").classList.remove("active");
+      document.getElementById("dashboard").classList.add("active");
+    }
+
+    // 🔥 Update username
+    const name = user.displayName || user.email.split("@")[0];
+    const dashName = document.getElementById("dashName");
+    const dashNav = document.getElementById("dashGreetNav");
+
+    if (dashName) dashName.textContent = name;
+    if (dashNav) dashNav.textContent = "Hello, " + name + "!";
+
+    // 🔥 Show music player
+    const player = document.getElementById("floatPlayer");
+    if (player) player.classList.add("visible");
 
   }
 });
-
 
 // =========================
 // LOGOUT
